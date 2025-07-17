@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA Practice Questions - AI Interview Helper</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'core:index' %}">
+                <i class="fas fa-robot mr-2"></i>AI Interview Helper
+            </a>
+            <div class="navbar-nav ml-auto">
+                <a class="nav-link" href="{% url 'interview:technical' %}">Technical Interview</a>
+                <a class="nav-link" href="{% url 'interview:hr' %}">HR Interview</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1 class="mb-4">DSA Practice Questions</h1>
+        
+        <!-- Statistics -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body text-center">
+                        <h3>{{ easy_count }}</h3>
+                        <p class="mb-0">Easy Questions</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body text-center">
+                        <h3>{{ medium_count }}</h3>
+                        <p class="mb-0">Medium Questions</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-danger text-white">
+                    <div class="card-body text-center">
+                        <h3>{{ hard_count }}</h3>
+                        <p class="mb-0">Hard Questions</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body text-center">
+                        <h3>{{ questions.paginator.count }}</h3>
+                        <p class="mb-0">Total Questions</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filters and Search -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="get" class="row">
+                    <div class="col-md-3">
+                        <label class="form-label">Difficulty:</label>
+                        <select name="difficulty" class="form-control" onchange="this.form.submit()">
+                            <option value="all" {% if selected_difficulty == 'all' %}selected{% endif %}>All</option>
+                            {% for diff in difficulties %}
+                            <option value="{{ diff }}" {% if selected_difficulty == diff %}selected{% endif %}>
+                                {{ diff|capfirst }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Category:</label>
+                        <select name="category" class="form-control" onchange="this.form.submit()">
+                            <option value="all" {% if selected_category == 'all' %}selected{% endif %}>All</option>
+                            {% for value, label in categories %}
+                            <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Search:</label>
+                        <input type="text" name="search" class="form-control" 
+                               placeholder="Search questions..." 
+                               value="{{ search_query }}">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Questions List -->
+        <div class="row">
+            {% for question in questions %}
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">{{ question.title }}</h5>
+                        <span class="badge badge-{% if question.difficulty == 'easy' %}success{% elif question.difficulty == 'medium' %}warning{% else %}danger{% endif %}">
+                            {{ question.get_difficulty_display }}
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">{{ question.description|truncatewords:30 }}</p>
+                        <div class="mb-2">
+                            <small class="text-muted">
+                                <i class="fas fa-folder mr-1"></i>{{ question.get_category_display }}
+                            </small>
+                        </div>
+                        <button class="btn btn-primary btn-sm view-question" 
+                                data-question-id="{{ question.id }}">
+                            <i class="fas fa-eye mr-1"></i>View Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    No questions found matching your criteria.
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if questions.has_other_pages %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if questions.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ questions.previous_page_number }}{% if selected_difficulty != 'all' %}&difficulty={{ selected_difficulty }}{% endif %}{% if selected_category != 'all' %}&category={{ selected_category }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+                
+                {% for num in questions.paginator.page_range %}
+                    {% if questions.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                    {% elif num > questions.number|add:'-3' and num < questions.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% if selected_difficulty != 'all' %}&difficulty={{ selected_difficulty }}{% endif %}{% if selected_category != 'all' %}&category={{ selected_category }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if questions.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ questions.next_page_number }}{% if selected_difficulty != 'all' %}&difficulty={{ selected_difficulty }}{% endif %}{% if selected_category != 'all' %}&category={{ selected_category }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+
+    <!-- Question Detail Modal -->
+    <div class="modal fade" id="questionModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="questionTitle"></h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="questionDetails">
+                    <!-- Question details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div class="modal fade" id="loadingModal" tabindex="-1" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <p class="mt-2 mb-0">Loading question details...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.view-question').click(function() {
+                const questionId = $(this).data('question-id');
+                
+                // Show loading modal
+                $('#loadingModal').modal('show');
+                
+                $.ajax({
+                    url: `/dsa/api/question/${questionId}/`,
+                    method: 'GET',
+                    timeout: 10000, // 10 second timeout
+                    success: function(data) {
+                        if (data.success) {
+                            const q = data.question;
+                            $('#questionTitle').text(q.title);
+                            
+                            // Sanitize and build HTML
+                            let detailsHtml = `
+                                <div class="mb-3">
+                                    <h6><i class="fas fa-info-circle text-primary"></i> Description</h6>
+                                    <div class="border-left border-primary pl-3">
+                                        <p>${escapeHtml(q.description)}</p>
+                                    </div>
+                                </div>
+                            `;
+                            
+                            if (q.examples) {
+                                detailsHtml += `
+                                    <div class="mb-3">
+                                        <h6><i class="fas fa-code text-success"></i> Examples</h6>
+                                        <pre class="bg-light p-3 rounded">${escapeHtml(q.examples)}</pre>
+                                    </div>
+                                `;
+                            }
+                            
+                            if (q.constraints) {
+                                detailsHtml += `
+                                    <div class="mb-3">
+                                        <h6><i class="fas fa-exclamation-triangle text-warning"></i> Constraints</h6>
+                                        <div class="border-left border-warning pl-3">
+                                            <p>${escapeHtml(q.constraints)}</p>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                            
+                            if (q.solution_approach) {
+                                detailsHtml += `
+                                    <div class="mb-3">
+                                        <h6><i class="fas fa-lightbulb text-info"></i> Solution Approach</h6>
+                                        <div class="border-left border-info pl-3">
+                                            <p>${escapeHtml(q.solution_approach)}</p>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                            
+                            if (q.time_complexity || q.space_complexity) {
+                                detailsHtml += `
+                                    <div class="mb-3">
+                                        <h6><i class="fas fa-chart-line text-danger"></i> Complexity Analysis</h6>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <small class="text-muted">Time Complexity:</small>
+                                                <p class="font-weight-bold">${escapeHtml(q.time_complexity || 'N/A')}</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <small class="text-muted">Space Complexity:</small>
+                                                <p class="font-weight-bold">${escapeHtml(q.space_complexity || 'N/A')}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                            
+                            $('#questionDetails').html(detailsHtml);
+                            
+                            // Force hide loading modal and show question modal
+                            $('#loadingModal').modal('hide');
+                            cleanupModals();
+                            
+                            // Simple timeout to ensure loading modal is hidden
+                            setTimeout(function() {
+                                $('#questionModal').modal('show');
+                            }, 100);
+                            
+                        } else {
+                            $('#loadingModal').modal('hide');
+                            cleanupModals();
+                            alert('Error loading question details: ' + (data.error || 'Unknown error'));
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error:', status, error);
+                        $('#loadingModal').modal('hide');
+                        cleanupModals();
+                        
+                        if (status === 'timeout') {
+                            alert('Request timed out. Please try again.');
+                        } else {
+                            alert('Error loading question details. Please try again.');
+                        }
+                    }
+                });
+            });
+            
+            // Function to clean up modal issues
+            function cleanupModals() {
+                // Remove any lingering modal backdrops
+                $('.modal-backdrop').remove();
+                $('body').removeClass('modal-open');
+                
+                // Force remove the show class from loading modal
+                $('#loadingModal').removeClass('show');
+            }
+            
+            // Handle page unload to clean up modals
+            $(window).on('beforeunload', function() {
+                cleanupModals();
+            });
+        });
+        
+        // Helper function to escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

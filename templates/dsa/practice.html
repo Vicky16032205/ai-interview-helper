@@ -1,0 +1,409 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA Practice Session - AI Interview Helper</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'core:index' %}">
+                <i class="fas fa-robot mr-2"></i>AI Interview Helper
+            </a>
+            <div class="navbar-nav ml-auto">
+                <a class="nav-link" href="{% url 'interview:technical' %}">Technical Interview</a>
+                <a class="nav-link" href="{% url 'interview:hr' %}">HR Interview</a>
+                <a class="nav-link" href="{% url 'dsa:questions' %}">All Questions</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8">
+                <h1 class="mb-4">DSA Practice Session</h1>
+                
+                <!-- Practice Questions -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Practice Questions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group">
+                            {% for question in questions %}
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ question.title }}</h6>
+                                    <span class="badge badge-{% if question.difficulty == 'easy' %}success{% elif question.difficulty == 'medium' %}warning{% else %}danger{% endif %}">
+                                        {{ question.get_difficulty_display }}
+                                    </span>
+                                </div>
+                                <p class="mb-1">{{ question.description|truncatewords:20 }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="fas fa-folder mr-1"></i>{{ question.get_category_display }}
+                                    </small>
+                                    <a href="{% url 'dsa:solve' question.id %}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-code mr-1"></i>Solve
+                                    </a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <!-- Practice Timer -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Practice Timer</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="timer-display">
+                            <h2 id="timer">00:00:00</h2>
+                        </div>
+                        <button class="btn btn-primary" id="startTimer">Start Timer</button>
+                        <button class="btn btn-secondary" id="pauseTimer" style="display:none;">Pause</button>
+                        <button class="btn btn-danger" id="resetTimer">Reset</button>
+                    </div>
+                </div>
+                
+                <!-- Quick Stats -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Quick Stats</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <h4>{{ questions.count }}</h4>
+                                <small class="text-muted">Questions</small>
+                            </div>
+                            <div class="col-6">
+                                <h4>5</h4>
+                                <small class="text-muted">Session</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Quick Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <a href="{% url 'dsa:questions' %}" class="btn btn-outline-primary btn-block mb-2">
+                            <i class="fas fa-list mr-2"></i>Browse All Questions
+                        </a>
+                        <button class="btn btn-outline-success btn-block mb-2" onclick="location.reload()">
+                            <i class="fas fa-refresh mr-2"></i>New Practice Set
+                        </button>
+                        <a href="{% url 'core:progress' %}" class="btn btn-outline-info btn-block">
+                            <i class="fas fa-chart-line mr-2"></i>View Progress
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            let startTime = null;
+            let timerInterval = null;
+            let isPaused = false;
+            let pausedTime = 0;
+            
+            function updateTimer() {
+                const currentTime = new Date().getTime();
+                const elapsed = currentTime - startTime + pausedTime;
+                
+                const hours = Math.floor(elapsed / (1000 * 60 * 60));
+                const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((elapsed % (1000 * 60)) / 1000);
+                
+                $('#timer').text(
+                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+                );
+            }
+            
+            $('#startTimer').click(function() {
+                if (!isPaused) {
+                    startTime = new Date().getTime();
+                    pausedTime = 0;
+                } else {
+                    startTime = new Date().getTime();
+                    isPaused = false;
+                }
+                
+                timerInterval = setInterval(updateTimer, 1000);
+                $(this).hide();
+                $('#pauseTimer').show();
+            });
+            
+            $('#pauseTimer').click(function() {
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                    const currentTime = new Date().getTime();
+                    pausedTime += currentTime - startTime;
+                    isPaused = true;
+                    
+                    $(this).hide();
+                    $('#startTimer').show();
+                }
+            });
+            
+            $('#resetTimer').click(function() {
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                }
+                startTime = null;
+                pausedTime = 0;
+                isPaused = false;
+                $('#timer').text('00:00:00');
+                $('#pauseTimer').hide();
+                $('#startTimer').show();
+            });
+            
+            // Question interaction
+            $('.view-details').click(function() {
+                const questionId = $(this).data('question-id');
+                currentModalQuestionId = questionId;
+                loadQuestionDetails(questionId);
+            });
+            
+            function loadQuestionDetails(questionId) {
+                $('#questionModal').modal('show');
+                $('#modalQuestionDetails').html(`
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading question details...</p>
+                    </div>
+                `);
+                
+                $.ajax({
+                    url: `/dsa/api/question/${questionId}/`,
+                    method: 'GET',
+                    success: function(data) {
+                        if (data.success) {
+                            const q = data.question;
+                            $('#modalQuestionTitle').text(q.title);
+                            
+                            let detailsHtml = `
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h6>Description</h6>
+                                        <div>
+                                            <span class="badge badge-${q.difficulty === 'easy' ? 'success' : q.difficulty === 'medium' ? 'warning' : 'danger'}">${q.difficulty}</span>
+                                            <span class="badge badge-secondary">${q.category}</span>
+                                        </div>
+                                    </div>
+                                    <p>${q.description}</p>
+                                </div>
+                            `;
+                            
+                            if (q.examples) {
+                                detailsHtml += `
+                                    <div class="mb-3">
+                                        <h6>Examples</h6>
+                                        <pre class="bg-light p-3 rounded">${q.examples}</pre>
+                                    </div>
+                                `;
+                            }
+                            
+                            if (q.constraints) {
+                                detailsHtml += `
+                                    <div class="mb-3">
+                                        <h6>Constraints</h6>
+                                        <p>${q.constraints}</p>
+                                    </div>
+                                `;
+                            }
+                            
+                            if (q.time_complexity || q.space_complexity) {
+                                detailsHtml += `
+                                    <div class="mb-3">
+                                        <h6>Complexity Analysis</h6>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <strong>Time:</strong> ${q.time_complexity || 'N/A'}
+                                            </div>
+                                            <div class="col-md-6">
+                                                <strong>Space:</strong> ${q.space_complexity || 'N/A'}
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                            
+                            $('#modalQuestionDetails').html(detailsHtml);
+                        }
+                    },
+                    error: function() {
+                        $('#modalQuestionDetails').html(`
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>
+                                Error loading question details. Please try again.
+                            </div>
+                        `);
+                    }
+                });
+            }
+            
+            $('#modalSolveBtn').click(function() {
+                if (currentModalQuestionId) {
+                    window.location.href = `/dsa/solve/${currentModalQuestionId}/`;
+                }
+            });
+            
+            // Progress tracking
+            function updateProgress() {
+                const totalQuestions = $('.question-item').length;
+                const solvedQuestions = $('.question-item .badge-success').length;
+                const attemptedQuestions = $('.question-item .badge-warning').length;
+                
+                const progressPercent = totalQuestions > 0 ? Math.round((solvedQuestions / totalQuestions) * 100) : 0;
+                
+                $('#progressBar').css('width', progressPercent + '%');
+                $('#progressPercent').text(progressPercent + '%');
+                $('#solvedCount').text(solvedQuestions);
+                $('#attemptedCount').text(attemptedQuestions);
+                
+                // Update difficulty breakdown
+                updateDifficultyBreakdown();
+            }
+            
+            function updateDifficultyBreakdown() {
+                const easyTotal = $('.question-item').filter(function() {
+                    return $(this).find('.badge-success').length > 0;
+                }).length;
+                
+                const mediumTotal = $('.question-item').filter(function() {
+                    return $(this).find('.badge-warning').length > 0;
+                }).length;
+                
+                const hardTotal = $('.question-item').filter(function() {
+                    return $(this).find('.badge-danger').length > 0;
+                }).length;
+                
+                $('#easyProgress').text(`0/${easyTotal}`);
+                $('#mediumProgress').text(`0/${mediumTotal}`);
+                $('#hardProgress').text(`0/${hardTotal}`);
+            }
+            
+            // Initialize progress
+            updateProgress();
+            
+            // Quick action functions
+            window.startRandomQuestion = function() {
+                const questionItems = $('.question-item');
+                if (questionItems.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * questionItems.length);
+                    const randomQuestion = questionItems.eq(randomIndex);
+                    const questionId = randomQuestion.data('question-id');
+                    window.location.href = `/dsa/solve/${questionId}/`;
+                }
+            };
+            
+            window.showHints = function() {
+                alert('Hints feature coming soon! Practice with the questions to improve your skills.');
+            };
+            
+            // Question item hover effects
+            $('.question-item').hover(
+                function() {
+                    $(this).addClass('bg-light');
+                },
+                function() {
+                    $(this).removeClass('bg-light');
+                }
+            );
+            
+            // Keyboard shortcuts
+            $(document).keydown(function(e) {
+                if (e.ctrlKey || e.metaKey) {
+                    switch(e.which) {
+                        case 32: // Ctrl+Space - Start/Pause timer
+                            e.preventDefault();
+                            if ($('#startTimer').is(':visible')) {
+                                $('#startTimer').click();
+                            } else {
+                                $('#pauseTimer').click();
+                            }
+                            break;
+                        case 82: // Ctrl+R - Reset timer
+                            e.preventDefault();
+                            $('#resetTimer').click();
+                            break;
+                        case 78: // Ctrl+N - New session
+                            e.preventDefault();
+                            location.reload();
+                            break;
+                    }
+                }
+            });
+            
+            // Add tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+            
+            // Auto-save session state
+            function saveSessionState() {
+                const sessionData = {
+                    startTime: startTime,
+                    pausedTime: pausedTime,
+                    isPaused: isPaused,
+                    progress: {
+                        solved: $('.question-item .badge-success').length,
+                        attempted: $('.question-item .badge-warning').length
+                    }
+                };
+                localStorage.setItem('dsaSessionState', JSON.stringify(sessionData));
+            }
+            
+            // Load session state
+            function loadSessionState() {
+                const savedState = localStorage.getItem('dsaSessionState');
+                if (savedState) {
+                    try {
+                        const sessionData = JSON.parse(savedState);
+                        // Restore timer state if needed
+                        if (sessionData.startTime && !sessionData.isPaused) {
+                            startTime = sessionData.startTime;
+                            pausedTime = sessionData.pausedTime;
+                            timerInterval = setInterval(updateTimer, 1000);
+                            $('#startTimer').hide();
+                            $('#pauseTimer').show();
+                        }
+                    } catch (e) {
+                        console.error('Error loading session state:', e);
+                    }
+                }
+            }
+            
+            // Load session state on page load
+            loadSessionState();
+            
+            // Save session state periodically
+            setInterval(saveSessionState, 30000); // Save every 30 seconds
+            
+            // Save on page unload
+            $(window).on('beforeunload', function() {
+                saveSessionState();
+            });
+        });
+    </script>
+</body>
+</html>

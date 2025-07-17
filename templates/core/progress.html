@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Tracking - AI Interview Helper</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'core:index' %}">
+                <i class="fas fa-robot mr-2"></i>AI Interview Helper
+            </a>
+            <div class="navbar-nav ml-auto">
+                <a class="nav-link" href="{% url 'interview:technical' %}">Technical Interview</a>
+                <a class="nav-link" href="{% url 'interview:hr' %}">HR Interview</a>
+                <a class="nav-link" href="{% url 'dsa:questions' %}">DSA Practice</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1 class="mb-4">Your Progress Dashboard</h1>
+        
+        <!-- Stats Overview -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-clipboard-list fa-2x text-primary mb-2"></i>
+                        <h4>{{ total_sessions }}</h4>
+                        <p class="text-muted">Total Sessions</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-code fa-2x text-success mb-2"></i>
+                        <h4>{{ technical_sessions }}</h4>
+                        <p class="text-muted">Technical Sessions</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-users fa-2x text-info mb-2"></i>
+                        <h4>{{ hr_sessions }}</h4>
+                        <p class="text-muted">HR Sessions</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-star fa-2x text-warning mb-2"></i>
+                        <h4>{{ average_score }}/10</h4>
+                        <p class="text-muted">Average Score</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Sessions -->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Recent Sessions</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if recent_sessions %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Date</th>
+                                        <th>Questions</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for session in recent_sessions %}
+                                    <tr>
+                                        <td>
+                                            <span class="badge badge-{% if session.interview_type == 'technical' %}primary{% else %}info{% endif %}">
+                                                {{ session.get_interview_type_display }}
+                                            </span>
+                                        </td>
+                                        <td>{{ session.created_at|date:"M d, Y" }}</td>
+                                        <td>{{ session.questions.count }}</td>
+                                        <td>
+                                            <span class="badge badge-success">Completed</span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                            <h5>No Sessions Yet</h5>
+                            <p class="text-muted">Start practicing to see your progress here!</p>
+                            <a href="{% url 'interview:technical' %}" class="btn btn-primary mr-2">Start Technical Interview</a>
+                            <a href="{% url 'interview:hr' %}" class="btn btn-info">Start HR Interview</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Skill Breakdown</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="skill-item mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Technical Skills</span>
+                                <span>{{ skill_breakdown.technical }}</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-primary" style="width: {% if skill_breakdown.technical %}{{ skill_breakdown.technical|floatformat:0 }}%{% else %}0%{% endif %}"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>HR Skills</span>
+                                <span>{{ skill_breakdown.hr }}</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-info" style="width: {% if skill_breakdown.hr %}{{ skill_breakdown.hr|floatformat:0 }}%{% else %}0%{% endif %}"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Coding Practice</span>
+                                <span>{{ skill_breakdown.coding }}</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-success" style="width: {% if skill_breakdown.coding %}{{ skill_breakdown.coding|floatformat:0 }}%{% else %}0%{% endif %}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5>Quick Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <a href="{% url 'interview:technical' %}" class="btn btn-primary btn-block mb-2">
+                            <i class="fas fa-code mr-2"></i>Practice Technical Interview
+                        </a>
+                        <a href="{% url 'interview:hr' %}" class="btn btn-info btn-block mb-2">
+                            <i class="fas fa-users mr-2"></i>Practice HR Interview
+                        </a>
+                        <a href="{% url 'dsa:questions' %}" class="btn btn-success btn-block">
+                            <i class="fas fa-puzzle-piece mr-2"></i>Practice DSA Questions
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
