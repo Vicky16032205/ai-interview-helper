@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA Problem: {{ question.title }} - AI Interview Helper</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .problem-container {
+            margin-top: 120px;
+            min-height: calc(100vh - 120px);
+        }
+        
+        .problem-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            margin-top: 80px;
+        }
+        
+        .difficulty-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .difficulty-easy {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .difficulty-medium {
+            background-color: #ffc107;
+            color: black;
+        }
+        
+        .difficulty-hard {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .code-editor {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            min-height: 400px;
+            resize: vertical;
+        }
+        
+        .problem-description {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .test-cases {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .btn-run-code {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-run-code:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+            color: white;
+        }
+        
+        .btn-submit {
+            background: linear-gradient(135deg, #007bff, #6610f2);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand font-weight-bold" href="{% url 'core:index' %}">
+                <i class="fas fa-robot mr-2"></i>AI Interview Helper
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'interview:technical' %}">Technical Interview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'interview:hr' %}">HR Interview</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'dsa:questions' %}">DSA Practice</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'core:progress' %}">Progress</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Problem Header -->
+    <section class="problem-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="h3 mb-3 animate__animated animate__fadeInLeft">
+                        <i class="fas fa-code mr-2"></i>{{ question.title }}
+                    </h1>
+                    <div class="d-flex align-items-center animate__animated animate__fadeInLeft animate__delay-1s">
+                        <span class="difficulty-badge difficulty-{{ question.difficulty|lower }} mr-3">
+                            {{ question.difficulty|capfirst }}
+                        </span>
+                        <span class="text-light">
+                            <i class="fas fa-tag mr-2"></i>{{ question.category|capfirst }}
+                        </span>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-right">
+                    <a href="{% url 'dsa:questions' %}" class="btn btn-outline-light">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Questions
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container problem-container">
+        <div class="row">
+            <!-- Problem Description -->
+            <div class="col-lg-6">
+                <div class="problem-description animate__animated animate__fadeInUp">
+                    <h4 class="mb-4">
+                        <i class="fas fa-file-alt mr-2 text-primary"></i>Problem Description
+                    </h4>
+                    <div class="mb-4">
+                        {{ question.description|linebreaks }}
+                    </div>
+                    
+                    {% if question.constraints %}
+                    <div class="mb-4">
+                        <h6><i class="fas fa-exclamation-triangle mr-2 text-warning"></i>Constraints:</h6>
+                        <div class="text-muted">
+                            {{ question.constraints|linebreaks }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Test Cases -->
+                    <div class="test-cases">
+                        <h6 class="mb-3">
+                            <i class="fas fa-vial mr-2 text-info"></i>Examples
+                        </h6>
+                        
+                        {% if question.examples %}
+                        <div class="mb-3">
+                            <div class="mt-2">
+                                {{ question.examples|linebreaks }}
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="mb-3">
+                            <div class="text-muted">
+                                <em>No examples provided for this problem.</em>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Additional Information -->
+                    {% if question.solution_approach or question.time_complexity or question.space_complexity %}
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <h6 class="mb-3">
+                            <i class="fas fa-lightbulb mr-2 text-warning"></i>Additional Information
+                        </h6>
+                        
+                        {% if question.solution_approach %}
+                        <div class="mb-3">
+                            <strong>Solution Approach:</strong>
+                            <div class="mt-2 text-muted">
+                                {{ question.solution_approach|linebreaks }}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if question.time_complexity %}
+                        <div class="mb-2">
+                            <strong>Time Complexity:</strong> 
+                            <code class="text-primary">{{ question.time_complexity }}</code>
+                        </div>
+                        {% endif %}
+                        
+                        {% if question.space_complexity %}
+                        <div class="mb-2">
+                            <strong>Space Complexity:</strong> 
+                            <code class="text-primary">{{ question.space_complexity }}</code>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Code Editor -->
+            <div class="col-lg-6">
+                <div class="animate__animated animate__fadeInUp animate__delay-1s">
+                    <h4 class="mb-4">
+                        <i class="fas fa-keyboard mr-2 text-success"></i>Your Solution
+                    </h4>
+                    
+                    <!-- Language Selector -->
+                    <div class="mb-3">
+                        <select class="form-control" id="languageSelect" style="max-width: 200px;">
+                            <option value="python">Python</option>
+                            <option value="javascript">JavaScript</option>
+                            <option value="java">Java</option>
+                            <option value="cpp">C++</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Code Editor -->
+                    <textarea 
+                        id="codeEditor" 
+                        class="form-control code-editor" 
+                        placeholder="Write your solution here..."
+                        rows="20">{% if question.starter_code %}{{ question.starter_code }}{% else %}def solution():
+    # Write your code here
+    pass{% endif %}</textarea>
+                    
+                    <!-- Action Buttons -->
+                    <div class="mt-4 text-right">
+                        <button class="btn btn-run-code mr-3" onclick="runCode()">
+                            <i class="fas fa-play mr-2"></i>Run Code
+                        </button>
+                        <button class="btn btn-submit" onclick="submitSolution()">
+                            <i class="fas fa-check mr-2"></i>Submit Solution
+                        </button>
+                    </div>
+                    
+                    <!-- Results Area -->
+                    <div id="resultsArea" class="mt-4" style="display: none;">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-terminal mr-2"></i>Results
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div id="resultsContent"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/plugins/autoloader/prism-autoloader.min.js"></script>
+    
+    <script>
+        function runCode() {
+            const code = document.getElementById('codeEditor').value;
+            const language = document.getElementById('languageSelect').value;
+            
+            // Show results area
+            document.getElementById('resultsArea').style.display = 'block';
+            document.getElementById('resultsContent').innerHTML = `
+                <div class="text-center">
+                    <i class="fas fa-spinner fa-spin mr-2"></i>Running your code...
+                </div>
+            `;
+            
+            // Simulate code execution (you can implement actual execution here)
+            setTimeout(() => {
+                document.getElementById('resultsContent').innerHTML = `
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        Code execution simulation completed. 
+                        <br><small>Note: Actual code execution would require backend implementation.</small>
+                    </div>
+                `;
+            }, 2000);
+        }
+        
+        function submitSolution() {
+            const code = document.getElementById('codeEditor').value;
+            const language = document.getElementById('languageSelect').value;
+            
+            if (!code.trim()) {
+                alert('Please write some code before submitting!');
+                return;
+            }
+            
+            // Show results area
+            document.getElementById('resultsArea').style.display = 'block';
+            document.getElementById('resultsContent').innerHTML = `
+                <div class="text-center">
+                    <i class="fas fa-spinner fa-spin mr-2"></i>Submitting your solution...
+                </div>
+            `;
+            
+            // Simulate submission (you can implement actual submission here)
+            setTimeout(() => {
+                document.getElementById('resultsContent').innerHTML = `
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        Solution submitted successfully!
+                        <br><small>Note: Actual testing and evaluation would require backend implementation.</small>
+                    </div>
+                `;
+            }, 2000);
+        }
+        
+        // Language selector change handler
+        document.getElementById('languageSelect').addEventListener('change', function() {
+            const language = this.value;
+            const codeEditor = document.getElementById('codeEditor');
+            
+            // Set default code templates based on language
+            const templates = {
+                python: `def solution():
+    # Write your code here
+    pass`,
+                javascript: `function solution() {
+    // Write your code here
+}`,
+                java: `public class Solution {
+    public void solution() {
+        // Write your code here
+    }
+}`,
+                cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    // Write your code here
+    return 0;
+}`
+            };
+            
+            if (!codeEditor.value.trim() || codeEditor.value === codeEditor.defaultValue) {
+                codeEditor.value = templates[language];
+            }
+        });
+    </script>
+</body>
+</html>

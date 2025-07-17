@@ -39,7 +39,46 @@
             </div>
         </div>
     </nav>
-
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interview Helper - Prepare for Your Dream Job</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand font-weight-bold" href="/">
+                <i class="fas fa-robot mr-2"></i>AI Interview Helper
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#how-it-works">How It Works</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#testimonials">Testimonials</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-primary text-white ml-2" href="#get-started">Get Started</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">
@@ -232,32 +271,38 @@
             <p class="lead mb-4">Choose your path and begin practicing today</p>
             <div class="row justify-content-center">
                 <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <i class="fas fa-code fa-3x mb-3 text-primary"></i>
+                    <div class="card h-100 get-started-card">
+                        <div class="card-body text-center">
+                            <div class="card-icon">
+                                <i class="fas fa-code fa-3x mb-3"></i>
+                            </div>
                             <h5 class="card-title">Technical Interview</h5>
                             <p class="card-text">Practice coding questions and system design</p>
-                            <a href="{% url 'interview:technical' %}" class="btn btn-primary">Start Technical Prep</a>
+                            <a href="{% url 'interview:technical' %}" class="btn btn-primary btn-block">Start Technical Prep</a>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <i class="fas fa-users fa-3x mb-3 text-primary"></i>
+                    <div class="card h-100 get-started-card">
+                        <div class="card-body text-center">
+                            <div class="card-icon">
+                                <i class="fas fa-users fa-3x mb-3"></i>
+                            </div>
                             <h5 class="card-title">HR Interview</h5>
                             <p class="card-text">Master behavioral and situational questions</p>
-                            <a href="{% url 'interview:hr' %}" class="btn btn-primary">Start HR Prep</a>
+                            <a href="{% url 'interview:hr' %}" class="btn btn-primary btn-block">Start HR Prep</a>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <i class="fas fa-puzzle-piece fa-3x mb-3 text-primary"></i>
+                    <div class="card h-100 get-started-card">
+                        <div class="card-body text-center">
+                            <div class="card-icon">
+                                <i class="fas fa-puzzle-piece fa-3x mb-3"></i>
+                            </div>
                             <h5 class="card-title">DSA Practice</h5>
                             <p class="card-text">Solve algorithmic problems by difficulty</p>
-                            <a href="{% url 'dsa:questions' %}" class="btn btn-primary">Practice DSA</a>
+                            <a href="{% url 'dsa:questions' %}" class="btn btn-primary btn-block">Practice DSA</a>
                         </div>
                     </div>
                 </div>

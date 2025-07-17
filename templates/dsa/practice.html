@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,110 +7,290 @@
     {% load static %}
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'core:index' %}">
+            <a class="navbar-brand font-weight-bold" href="{% url 'core:index' %}">
                 <i class="fas fa-robot mr-2"></i>AI Interview Helper
             </a>
-            <div class="navbar-nav ml-auto">
-                <a class="nav-link" href="{% url 'interview:technical' %}">Technical Interview</a>
-                <a class="nav-link" href="{% url 'interview:hr' %}">HR Interview</a>
-                <a class="nav-link" href="{% url 'dsa:questions' %}">All Questions</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'interview:technical' %}">Technical Interview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'interview:hr' %}">HR Interview</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'dsa:questions' %}">DSA Practice</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'core:progress' %}">Progress</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
 
-    <div class="container mt-4">
+    <!-- Practice Header -->
+    <section class="practice-hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="practice-title animate__animated animate__fadeInLeft">
+                        <i class="fas fa-dumbbell mr-3"></i>Practice Session
+                    </h1>
+                    <p class="practice-subtitle animate__animated animate__fadeInLeft animate__delay-1s">
+                        Challenge yourself with carefully selected DSA problems
+                    </p>
+                </div>
+                <div class="col-lg-4 text-right">
+                    <button class="btn btn-outline-light btn-lg animate__animated animate__fadeInRight" onclick="location.reload()">
+                        <i class="fas fa-refresh mr-2"></i>New Session
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+        
+    <div class="container mt-5">
         <div class="row">
-            <div class="col-md-8">
-                <h1 class="mb-4">DSA Practice Session</h1>
-                
+            <!-- Questions Column -->
+            <div class="col-lg-8 mb-4">
                 <!-- Practice Questions -->
-                <div class="card">
-                    <div class="card-header">
-                        <h5>Practice Questions</h5>
+                <div class="practice-card animate__animated animate__fadeInUp">
+                    <div class="practice-card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4><i class="fas fa-list-check mr-2"></i>Your Challenge Set</h4>
+                            <span class="question-count-badge">{{ questions.count }} Questions</span>
+                        </div>
+                        <p class="text-muted mb-0">Complete these problems to improve your algorithmic thinking</p>
                     </div>
-                    <div class="card-body">
-                        <div class="list-group">
+                    
+                    <div class="practice-card-body">
+                        {% if questions %}
+                        <div class="questions-grid">
                             {% for question in questions %}
-                            <div class="list-group-item">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h6 class="mb-1">{{ question.title }}</h6>
-                                    <span class="badge badge-{% if question.difficulty == 'easy' %}success{% elif question.difficulty == 'medium' %}warning{% else %}danger{% endif %}">
-                                        {{ question.get_difficulty_display }}
-                                    </span>
+                            <div class="practice-question-item animate__animated animate__fadeInUp" style="animation-delay: {{ forloop.counter0|floatformat:1 }}00ms" data-question-id="{{ question.id }}">
+                                <div class="question-number">{{ forloop.counter }}</div>
+                                <div class="question-content">
+                                    <h6 class="question-title">{{ question.title }}</h6>
+                                    <p class="question-description">{{ question.description|truncatewords:20 }}</p>
+                                    <div class="question-tags">
+                                        <span class="difficulty-tag difficulty-{{ question.difficulty }}">
+                                            {{ question.get_difficulty_display }}
+                                        </span>
+                                        <span class="category-tag">
+                                            <i class="fas fa-tag mr-1"></i>{{ question.get_category_display }}
+                                        </span>
+                                        <span class="complexity-tag">
+                                            <i class="fas fa-clock mr-1"></i>{{ question.time_complexity|default:"O(n)" }}
+                                        </span>
+                                    </div>
                                 </div>
-                                <p class="mb-1">{{ question.description|truncatewords:20 }}</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <small class="text-muted">
-                                        <i class="fas fa-folder mr-1"></i>{{ question.get_category_display }}
-                                    </small>
-                                    <a href="{% url 'dsa:solve' question.id %}" class="btn btn-primary btn-sm">
+                                <div class="question-actions">
+                                    <button class="action-btn-small view-details" data-question-id="{{ question.id }}" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <a href="{% url 'dsa:solve' question.id %}" class="solve-btn-small" title="Solve Challenge">
                                         <i class="fas fa-code mr-1"></i>Solve
                                     </a>
                                 </div>
+                                <div class="question-status">
+                                    <span class="status-badge status-pending">Not Started</span>
+                                </div>
                             </div>
                             {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="empty-questions">
+                            <div class="empty-icon">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                            <h5>No Questions Available</h5>
+                            <p>No practice questions found. Please add some questions to start your session.</p>
+                            <a href="{% url 'dsa:questions' %}" class="btn btn-primary">
+                                <i class="fas fa-search mr-2"></i>Browse Questions
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Session Summary -->
+                <div class="practice-card mt-4 animate__animated animate__fadeInUp animate__delay-2s">
+                    <div class="practice-card-header">
+                        <h4><i class="fas fa-chart-line mr-2"></i>Session Analytics</h4>
+                    </div>
+                    <div class="practice-card-body">
+                        <div class="analytics-grid">
+                            <div class="analytics-item">
+                                <div class="analytics-icon bg-success">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div class="analytics-content">
+                                    <h3 id="solvedCount">0</h3>
+                                    <p>Solved</p>
+                                </div>
+                            </div>
+                            <div class="analytics-item">
+                                <div class="analytics-icon bg-warning">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="analytics-content">
+                                    <h3 id="attemptedCount">0</h3>
+                                    <p>Attempted</p>
+                                </div>
+                            </div>
+                            <div class="analytics-item">
+                                <div class="analytics-icon bg-info">
+                                    <i class="fas fa-stopwatch"></i>
+                                </div>
+                                <div class="analytics-content">
+                                    <h3 id="averageTime">0:00</h3>
+                                    <p>Avg Time</p>
+                                </div>
+                            </div>
+                            <div class="analytics-item">
+                                <div class="analytics-icon bg-primary">
+                                    <i class="fas fa-percentage"></i>
+                                </div>
+                                <div class="analytics-content">
+                                    <h3 id="accuracyRate">0%</h3>
+                                    <p>Accuracy</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div class="col-md-4">
+            <!-- Sidebar -->
+            <div class="col-lg-4">
                 <!-- Practice Timer -->
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5>Practice Timer</h5>
+                <div class="practice-sidebar-card animate__animated animate__fadeInRight">
+                    <div class="sidebar-card-header">
+                        <h5><i class="fas fa-stopwatch mr-2"></i>Practice Timer</h5>
                     </div>
-                    <div class="card-body text-center">
+                    <div class="sidebar-card-body">
                         <div class="timer-display">
-                            <h2 id="timer">00:00:00</h2>
+                            <div class="timer-circle">
+                                <h2 id="timer">00:00:00</h2>
+                            </div>
+                            <div class="timer-controls">
+                                <button class="timer-btn timer-btn-start" id="startTimer">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="timer-btn timer-btn-pause" id="pauseTimer" style="display:none;">
+                                    <i class="fas fa-pause"></i>
+                                </button>
+                                <button class="timer-btn timer-btn-reset" id="resetTimer">
+                                    <i class="fas fa-stop"></i>
+                                </button>
+                            </div>
                         </div>
-                        <button class="btn btn-primary" id="startTimer">Start Timer</button>
-                        <button class="btn btn-secondary" id="pauseTimer" style="display:none;">Pause</button>
-                        <button class="btn btn-danger" id="resetTimer">Reset</button>
                     </div>
                 </div>
                 
-                <!-- Quick Stats -->
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5>Quick Stats</h5>
+                <!-- Session Progress -->
+                <div class="practice-sidebar-card mt-4 animate__animated animate__fadeInRight animate__delay-1s">
+                    <div class="sidebar-card-header">
+                        <h5><i class="fas fa-chart-pie mr-2"></i>Progress Tracker</h5>
                     </div>
-                    <div class="card-body">
-                        <div class="row text-center">
-                            <div class="col-6">
-                                <h4>{{ questions.count }}</h4>
-                                <small class="text-muted">Questions</small>
+                    <div class="sidebar-card-body">
+                        <div class="progress-section">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="progress-label">Overall Progress</span>
+                                <span class="progress-value" id="progressPercent">0%</span>
                             </div>
-                            <div class="col-6">
-                                <h4>5</h4>
-                                <small class="text-muted">Session</small>
+                            <div class="progress-bar-custom">
+                                <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="difficulty-breakdown">
+                            <h6 class="breakdown-title">Difficulty Breakdown</h6>
+                            <div class="breakdown-grid">
+                                <div class="breakdown-item">
+                                    <div class="breakdown-circle bg-success">E</div>
+                                    <div class="breakdown-content">
+                                        <span class="breakdown-label">Easy</span>
+                                        <span class="breakdown-count" id="easyProgress">0/0</span>
+                                    </div>
+                                </div>
+                                <div class="breakdown-item">
+                                    <div class="breakdown-circle bg-warning">M</div>
+                                    <div class="breakdown-content">
+                                        <span class="breakdown-label">Medium</span>
+                                        <span class="breakdown-count" id="mediumProgress">0/0</span>
+                                    </div>
+                                </div>
+                                <div class="breakdown-item">
+                                    <div class="breakdown-circle bg-danger">H</div>
+                                    <div class="breakdown-content">
+                                        <span class="breakdown-label">Hard</span>
+                                        <span class="breakdown-count" id="hardProgress">0/0</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Quick Actions -->
-                <div class="card">
-                    <div class="card-header">
-                        <h5>Quick Actions</h5>
+                <div class="practice-sidebar-card mt-4 animate__animated animate__fadeInRight animate__delay-2s">
+                    <div class="sidebar-card-header">
+                        <h5><i class="fas fa-bolt mr-2"></i>Quick Actions</h5>
                     </div>
-                    <div class="card-body">
-                        <a href="{% url 'dsa:questions' %}" class="btn btn-outline-primary btn-block mb-2">
-                            <i class="fas fa-list mr-2"></i>Browse All Questions
-                        </a>
-                        <button class="btn btn-outline-success btn-block mb-2" onclick="location.reload()">
-                            <i class="fas fa-refresh mr-2"></i>New Practice Set
-                        </button>
-                        <a href="{% url 'core:progress' %}" class="btn btn-outline-info btn-block">
-                            <i class="fas fa-chart-line mr-2"></i>View Progress
-                        </a>
+                    <div class="sidebar-card-body">
+                        <div class="quick-actions">
+                            <a href="{% url 'dsa:questions' %}" class="quick-action-btn">
+                                <i class="fas fa-list mr-2"></i>Browse All Questions
+                            </a>
+                            <button class="quick-action-btn" onclick="startRandomQuestion()">
+                                <i class="fas fa-random mr-2"></i>Random Challenge
+                            </button>
+                            <button class="quick-action-btn" onclick="showHints()">
+                                <i class="fas fa-lightbulb mr-2"></i>Show Hints
+                            </button>
+                            <a href="{% url 'core:progress' %}" class="quick-action-btn">
+                                <i class="fas fa-chart-line mr-2"></i>View Progress
+                            </a>
+                        </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Question Details Modal -->
+    <div class="modal fade" id="questionModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title" id="modalQuestionTitle"></h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalQuestionDetails">
+                    <div class="loading-state">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="mt-3">Loading question details...</p>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="modalSolveBtn">
+                        <i class="fas fa-code mr-2"></i>Solve This Challenge
+                    </button>
                 </div>
             </div>
         </div>
@@ -124,7 +305,9 @@
             let timerInterval = null;
             let isPaused = false;
             let pausedTime = 0;
+            let currentModalQuestionId = null;
             
+            // Timer functionality with enhanced UI
             function updateTimer() {
                 const currentTime = new Date().getTime();
                 const elapsed = currentTime - startTime + pausedTime;
@@ -150,6 +333,7 @@
                 timerInterval = setInterval(updateTimer, 1000);
                 $(this).hide();
                 $('#pauseTimer').show();
+                $('.timer-circle').addClass('timer-running');
             });
             
             $('#pauseTimer').click(function() {
@@ -161,6 +345,7 @@
                     
                     $(this).hide();
                     $('#startTimer').show();
+                    $('.timer-circle').removeClass('timer-running');
                 }
             });
             
@@ -174,9 +359,10 @@
                 $('#timer').text('00:00:00');
                 $('#pauseTimer').hide();
                 $('#startTimer').show();
+                $('.timer-circle').removeClass('timer-running');
             });
             
-            // Question interaction
+            // Question interaction with enhanced animations
             $('.view-details').click(function() {
                 const questionId = $(this).data('question-id');
                 currentModalQuestionId = questionId;
@@ -186,11 +372,9 @@
             function loadQuestionDetails(questionId) {
                 $('#questionModal').modal('show');
                 $('#modalQuestionDetails').html(`
-                    <div class="text-center py-4">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="sr-only">Loading...</span>
-                        </div>
-                        <p class="mt-2">Loading question details...</p>
+                    <div class="loading-state">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="mt-3">Loading question details...</p>
                     </div>
                 `);
                 
@@ -203,60 +387,76 @@
                             $('#modalQuestionTitle').text(q.title);
                             
                             let detailsHtml = `
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6>Description</h6>
-                                        <div>
-                                            <span class="badge badge-${q.difficulty === 'easy' ? 'success' : q.difficulty === 'medium' ? 'warning' : 'danger'}">${q.difficulty}</span>
-                                            <span class="badge badge-secondary">${q.category}</span>
+                                <div class="question-detail-content">
+                                    <div class="detail-header">
+                                        <div class="detail-badges">
+                                            <span class="difficulty-badge difficulty-${q.difficulty}">${q.difficulty}</span>
+                                            <span class="category-badge">${q.category}</span>
                                         </div>
                                     </div>
-                                    <p>${q.description}</p>
-                                </div>
+                                    
+                                    <div class="detail-section">
+                                        <h6><i class="fas fa-info-circle text-primary mr-2"></i>Description</h6>
+                                        <p class="detail-text">${q.description}</p>
+                                    </div>
                             `;
                             
                             if (q.examples) {
                                 detailsHtml += `
-                                    <div class="mb-3">
-                                        <h6>Examples</h6>
-                                        <pre class="bg-light p-3 rounded">${q.examples}</pre>
+                                    <div class="detail-section">
+                                        <h6><i class="fas fa-lightbulb text-warning mr-2"></i>Examples</h6>
+                                        <pre class="detail-code">${q.examples}</pre>
                                     </div>
                                 `;
                             }
                             
                             if (q.constraints) {
                                 detailsHtml += `
-                                    <div class="mb-3">
-                                        <h6>Constraints</h6>
-                                        <p>${q.constraints}</p>
+                                    <div class="detail-section">
+                                        <h6><i class="fas fa-exclamation-triangle text-danger mr-2"></i>Constraints</h6>
+                                        <p class="detail-text">${q.constraints}</p>
                                     </div>
                                 `;
                             }
                             
                             if (q.time_complexity || q.space_complexity) {
                                 detailsHtml += `
-                                    <div class="mb-3">
-                                        <h6>Complexity Analysis</h6>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <strong>Time:</strong> ${q.time_complexity || 'N/A'}
+                                    <div class="detail-section">
+                                        <h6><i class="fas fa-tachometer-alt text-success mr-2"></i>Complexity Analysis</h6>
+                                        <div class="complexity-grid">
+                                            <div class="complexity-item">
+                                                <div class="complexity-icon">
+                                                    <i class="fas fa-clock"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="complexity-label">Time Complexity</div>
+                                                    <code class="complexity-value">${q.time_complexity || 'N/A'}</code>
+                                                </div>
                                             </div>
-                                            <div class="col-md-6">
-                                                <strong>Space:</strong> ${q.space_complexity || 'N/A'}
+                                            <div class="complexity-item">
+                                                <div class="complexity-icon">
+                                                    <i class="fas fa-memory"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="complexity-label">Space Complexity</div>
+                                                    <code class="complexity-value">${q.space_complexity || 'N/A'}</code>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 `;
                             }
                             
+                            detailsHtml += '</div>';
                             $('#modalQuestionDetails').html(detailsHtml);
                         }
                     },
                     error: function() {
                         $('#modalQuestionDetails').html(`
-                            <div class="alert alert-danger">
-                                <i class="fas fa-exclamation-triangle mr-2"></i>
-                                Error loading question details. Please try again.
+                            <div class="error-state">
+                                <i class="fas fa-exclamation-triangle text-danger"></i>
+                                <h5>Error Loading Question</h5>
+                                <p>Unable to load question details. Please try again.</p>
                             </div>
                         `);
                     }
@@ -269,11 +469,11 @@
                 }
             });
             
-            // Progress tracking
+            // Enhanced progress tracking
             function updateProgress() {
-                const totalQuestions = $('.question-item').length;
-                const solvedQuestions = $('.question-item .badge-success').length;
-                const attemptedQuestions = $('.question-item .badge-warning').length;
+                const totalQuestions = $('.practice-question-item').length;
+                const solvedQuestions = $('.practice-question-item .status-solved').length;
+                const attemptedQuestions = $('.practice-question-item .status-attempted').length;
                 
                 const progressPercent = totalQuestions > 0 ? Math.round((solvedQuestions / totalQuestions) * 100) : 0;
                 
@@ -282,57 +482,110 @@
                 $('#solvedCount').text(solvedQuestions);
                 $('#attemptedCount').text(attemptedQuestions);
                 
-                // Update difficulty breakdown
                 updateDifficultyBreakdown();
             }
             
             function updateDifficultyBreakdown() {
-                const easyTotal = $('.question-item').filter(function() {
-                    return $(this).find('.badge-success').length > 0;
-                }).length;
+                const questions = $('.practice-question-item');
+                let easyTotal = 0, mediumTotal = 0, hardTotal = 0;
+                let easySolved = 0, mediumSolved = 0, hardSolved = 0;
                 
-                const mediumTotal = $('.question-item').filter(function() {
-                    return $(this).find('.badge-warning').length > 0;
-                }).length;
+                questions.each(function() {
+                    const difficulty = $(this).find('.difficulty-easy').length > 0 ? 'easy' :
+                                     $(this).find('.difficulty-medium').length > 0 ? 'medium' : 'hard';
+                    const isSolved = $(this).find('.status-solved').length > 0;
+                    
+                    if (difficulty === 'easy') {
+                        easyTotal++;
+                        if (isSolved) easySolved++;
+                    } else if (difficulty === 'medium') {
+                        mediumTotal++;
+                        if (isSolved) mediumSolved++;
+                    } else {
+                        hardTotal++;
+                        if (isSolved) hardSolved++;
+                    }
+                });
                 
-                const hardTotal = $('.question-item').filter(function() {
-                    return $(this).find('.badge-danger').length > 0;
-                }).length;
-                
-                $('#easyProgress').text(`0/${easyTotal}`);
-                $('#mediumProgress').text(`0/${mediumTotal}`);
-                $('#hardProgress').text(`0/${hardTotal}`);
+                $('#easyProgress').text(`${easySolved}/${easyTotal}`);
+                $('#mediumProgress').text(`${mediumSolved}/${mediumTotal}`);
+                $('#hardProgress').text(`${hardSolved}/${hardTotal}`);
             }
             
             // Initialize progress
             updateProgress();
             
-            // Quick action functions
+            // Enhanced question item interactions
+            $('.practice-question-item').hover(
+                function() {
+                    $(this).addClass('question-hover');
+                },
+                function() {
+                    $(this).removeClass('question-hover');
+                }
+            );
+            
+            // Quick action functions with animations
             window.startRandomQuestion = function() {
-                const questionItems = $('.question-item');
+                const questionItems = $('.practice-question-item');
                 if (questionItems.length > 0) {
                     const randomIndex = Math.floor(Math.random() * questionItems.length);
                     const randomQuestion = questionItems.eq(randomIndex);
                     const questionId = randomQuestion.data('question-id');
-                    window.location.href = `/dsa/solve/${questionId}/`;
+                    
+                    // Add highlight animation before navigation
+                    randomQuestion.addClass('animate__animated animate__pulse');
+                    setTimeout(() => {
+                        window.location.href = `/dsa/solve/${questionId}/`;
+                    }, 500);
                 }
             };
             
             window.showHints = function() {
-                alert('Hints feature coming soon! Practice with the questions to improve your skills.');
+                // Create a beautiful hint modal
+                const hintModal = `
+                    <div class="modal fade" id="hintModal" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header bg-info text-white">
+                                    <h5 class="modal-title"><i class="fas fa-lightbulb mr-2"></i>Practice Hints</h5>
+                                    <button type="button" class="close text-white" data-dismiss="modal">
+                                        <span>&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="hint-content">
+                                        <div class="hint-item">
+                                            <i class="fas fa-check-circle text-success"></i>
+                                            <span>Start with easier problems to build confidence</span>
+                                        </div>
+                                        <div class="hint-item">
+                                            <i class="fas fa-clock text-warning"></i>
+                                            <span>Set time limits for each problem</span>
+                                        </div>
+                                        <div class="hint-item">
+                                            <i class="fas fa-code text-primary"></i>
+                                            <span>Focus on understanding the algorithm first</span>
+                                        </div>
+                                        <div class="hint-item">
+                                            <i class="fas fa-repeat text-info"></i>
+                                            <span>Practice similar problems to reinforce concepts</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                $('body').append(hintModal);
+                $('#hintModal').modal('show');
+                $('#hintModal').on('hidden.bs.modal', function() {
+                    $(this).remove();
+                });
             };
             
-            // Question item hover effects
-            $('.question-item').hover(
-                function() {
-                    $(this).addClass('bg-light');
-                },
-                function() {
-                    $(this).removeClass('bg-light');
-                }
-            );
-            
-            // Keyboard shortcuts
+            // Enhanced keyboard shortcuts
             $(document).keydown(function(e) {
                 if (e.ctrlKey || e.metaKey) {
                     switch(e.which) {
@@ -352,40 +605,40 @@
                             e.preventDefault();
                             location.reload();
                             break;
+                        case 191: // Ctrl+/ - Show hints
+                            e.preventDefault();
+                            showHints();
+                            break;
                     }
                 }
             });
             
-            // Add tooltips
-            $('[data-toggle="tooltip"]').tooltip();
-            
-            // Auto-save session state
+            // Session state management
             function saveSessionState() {
                 const sessionData = {
                     startTime: startTime,
                     pausedTime: pausedTime,
                     isPaused: isPaused,
                     progress: {
-                        solved: $('.question-item .badge-success').length,
-                        attempted: $('.question-item .badge-warning').length
+                        solved: $('.practice-question-item .status-solved').length,
+                        attempted: $('.practice-question-item .status-attempted').length
                     }
                 };
                 localStorage.setItem('dsaSessionState', JSON.stringify(sessionData));
             }
             
-            // Load session state
             function loadSessionState() {
                 const savedState = localStorage.getItem('dsaSessionState');
                 if (savedState) {
                     try {
                         const sessionData = JSON.parse(savedState);
-                        // Restore timer state if needed
                         if (sessionData.startTime && !sessionData.isPaused) {
                             startTime = sessionData.startTime;
                             pausedTime = sessionData.pausedTime;
                             timerInterval = setInterval(updateTimer, 1000);
                             $('#startTimer').hide();
                             $('#pauseTimer').show();
+                            $('.timer-circle').addClass('timer-running');
                         }
                     } catch (e) {
                         console.error('Error loading session state:', e);
@@ -396,13 +649,30 @@
             // Load session state on page load
             loadSessionState();
             
-            // Save session state periodically
-            setInterval(saveSessionState, 30000); // Save every 30 seconds
+            // Auto-save session state
+            setInterval(saveSessionState, 30000);
             
             // Save on page unload
             $(window).on('beforeunload', function() {
                 saveSessionState();
             });
+            
+            // Animate elements on scroll
+            function animateOnScroll() {
+                $('.animate-on-scroll').each(function() {
+                    const elementTop = $(this).offset().top;
+                    const elementBottom = elementTop + $(this).outerHeight();
+                    const viewportTop = $(window).scrollTop();
+                    const viewportBottom = viewportTop + $(window).height();
+
+                    if (elementBottom > viewportTop && elementTop < viewportBottom) {
+                        $(this).addClass('animated');
+                    }
+                });
+            }
+            
+            $(window).on('scroll', animateOnScroll);
+            animateOnScroll();
         });
     </script>
 </body>

@@ -7,151 +7,313 @@
     {% load static %}
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <!-- Force visibility styles -->
+    <style>
+        /* Critical visibility fixes for dropdown content */
+        .filter-label {
+            color: #2C3E50 !important;
+            font-weight: 600 !important;
+            display: block !important;
+            margin-bottom: 0.5rem !important;
+        }
+        
+        .filter-select,
+        .form-control,
+        select.filter-select,
+        select.form-control {
+            color: #2C3E50 !important;
+            background-color: #ffffff !important;
+            background: #ffffff !important;
+            border: 2px solid #e9ecef !important;
+        }
+        
+        .filter-select option,
+        .form-control option,
+        select.filter-select option,
+        select.form-control option {
+            color: #2C3E50 !important;
+            background-color: #ffffff !important;
+            background: #ffffff !important;
+        }
+        
+        .filter-header h4 {
+            color: #2C3E50 !important;
+        }
+        
+        .filter-card {
+            background: white !important;
+        }
+        
+        .text-muted {
+            color: #6c757d !important;
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'core:index' %}">
+            <a class="navbar-brand font-weight-bold" href="{% url 'core:index' %}">
                 <i class="fas fa-robot mr-2"></i>AI Interview Helper
             </a>
-            <div class="navbar-nav ml-auto">
-                <a class="nav-link" href="{% url 'interview:technical' %}">Technical Interview</a>
-                <a class="nav-link" href="{% url 'interview:hr' %}">HR Interview</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'interview:technical' %}">Technical Interview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'interview:hr' %}">HR Interview</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'dsa:questions' %}">DSA Practice <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'core:progress' %}">Progress</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
 
-    <div class="container mt-4">
-        <h1 class="mb-4">DSA Practice Questions</h1>
-        
-        <!-- Statistics -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card bg-success text-white">
-                    <div class="card-body text-center">
-                        <h3>{{ easy_count }}</h3>
-                        <p class="mb-0">Easy Questions</p>
+    <!-- Hero Section -->
+    <section class="hero-section-mini">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 font-weight-bold animate__animated animate__fadeInLeft">
+                        <i class="fas fa-brain mr-3"></i>DSA Practice Arena
+                    </h1>
+                    <p class="lead animate__animated animate__fadeInLeft animate__delay-1s">
+                        Master Data Structures & Algorithms with our curated collection of coding challenges. 
+                        Practice smart, code better, ace interviews!
+                    </p>
+                    <div class="animate__animated animate__fadeInLeft animate__delay-2s">
+                        <a href="{% url 'dsa:practice' %}" class="btn btn-primary btn-lg mr-3">
+                            <i class="fas fa-play mr-2"></i>Start Practice Session
+                        </a>
+                        <button class="btn btn-outline-primary btn-lg" id="randomQuestionBtn">
+                            <i class="fas fa-random mr-2"></i>Random Challenge
+                        </button>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card bg-warning text-white">
-                    <div class="card-body text-center">
-                        <h3>{{ medium_count }}</h3>
-                        <p class="mb-0">Medium Questions</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card bg-danger text-white">
-                    <div class="card-body text-center">
-                        <h3>{{ hard_count }}</h3>
-                        <p class="mb-0">Hard Questions</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card bg-info text-white">
-                    <div class="card-body text-center">
-                        <h3>{{ questions.paginator.count }}</h3>
-                        <p class="mb-0">Total Questions</p>
+                <div class="col-lg-4">
+                    <div class="hero-illustration animate__animated animate__fadeInRight">
+                        <i class="fas fa-code-branch fa-8x text-primary opacity-20"></i>
                     </div>
                 </div>
             </div>
         </div>
+    </section>
         
-        <!-- Filters and Search -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <form method="get" class="row">
-                    <div class="col-md-3">
-                        <label class="form-label">Difficulty:</label>
-                        <select name="difficulty" class="form-control" onchange="this.form.submit()">
-                            <option value="all" {% if selected_difficulty == 'all' %}selected{% endif %}>All</option>
-                            {% for diff in difficulties %}
-                            <option value="{{ diff }}" {% if selected_difficulty == diff %}selected{% endif %}>
-                                {{ diff|capfirst }}
-                            </option>
-                            {% endfor %}
-                        </select>
+    <!-- Stats Overview -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="stats-card text-center animate__animated animate__fadeInUp">
+                        <div class="stats-icon">
+                            <i class="fas fa-list-alt"></i>
+                        </div>
+                        <h3 class="stats-number">{{ questions.paginator.count }}</h3>
+                        <p class="stats-label">Total Questions</p>
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Category:</label>
-                        <select name="category" class="form-control" onchange="this.form.submit()">
-                            <option value="all" {% if selected_category == 'all' %}selected{% endif %}>All</option>
-                            {% for value, label in categories %}
-                            <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>
-                                {{ label }}
-                            </option>
-                            {% endfor %}
-                        </select>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="stats-card text-center animate__animated animate__fadeInUp animate__delay-1s">
+                        <div class="stats-icon bg-success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3 class="stats-number">{{ easy_count }}</h3>
+                        <p class="stats-label">Easy Problems</p>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Search:</label>
-                        <input type="text" name="search" class="form-control" 
-                               placeholder="Search questions..." 
-                               value="{{ search_query }}">
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="stats-card text-center animate__animated animate__fadeInUp animate__delay-2s">
+                        <div class="stats-icon bg-warning">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <h3 class="stats-number">{{ medium_count }}</h3>
+                        <p class="stats-label">Medium Problems</p>
                     </div>
-                    <div class="col-md-2">
-                        <label class="form-label">&nbsp;</label>
-                        <button type="submit" class="btn btn-primary btn-block">
-                            <i class="fas fa-search"></i> Search
-                        </button>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="stats-card text-center animate__animated animate__fadeInUp animate__delay-3s">
+                        <div class="stats-icon bg-danger">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <h3 class="stats-number">{{ hard_count }}</h3>
+                        <p class="stats-label">Hard Problems</p>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+        
+    <!-- Filters Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="filter-card">
+                <div class="filter-header">
+                    <h4 style="color: #2C3E50 !important;"><i class="fas fa-filter mr-2"></i>Find Your Challenge</h4>
+                    <p class="text-muted" style="color: #6c757d !important;">Filter questions by difficulty, category, or search for specific topics</p>
+                </div>
+                <form method="get" class="filter-form">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="filter-group">
+                                <label class="filter-label" style="color: #2C3E50 !important; font-weight: 600;">
+                                    <i class="fas fa-signal mr-2"></i>Difficulty Level
+                                </label>
+                                <select name="difficulty" class="form-control filter-select" style="color: #2C3E50 !important; background-color: #ffffff !important;" onchange="this.form.submit()">
+                                    <option value="all" style="color: #2C3E50 !important; background-color: #ffffff !important;" {% if selected_difficulty == 'all' %}selected{% endif %}>All Levels</option>
+                                    {% for diff in difficulties %}
+                                    <option value="{{ diff }}" style="color: #2C3E50 !important; background-color: #ffffff !important;" {% if selected_difficulty == diff %}selected{% endif %}>
+                                        {{ diff|capfirst }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="filter-group">
+                                <label class="filter-label" style="color: #2C3E50 !important; font-weight: 600;">
+                                    <i class="fas fa-tags mr-2"></i>Category
+                                </label>
+                                <select name="category" class="form-control filter-select" style="color: #2C3E50 !important; background-color: #ffffff !important;" onchange="this.form.submit()">
+                                    <option value="all" style="color: #2C3E50 !important; background-color: #ffffff !important;" {% if selected_category == 'all' %}selected{% endif %}>All Categories</option>
+                                    {% for value, label in categories %}
+                                    <option value="{{ value }}" style="color: #2C3E50 !important; background-color: #ffffff !important;" {% if selected_category == value %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 mb-3">
+                            <div class="filter-group">
+                                <label class="filter-label" style="color: #2C3E50 !important; font-weight: 600;">
+                                    <i class="fas fa-search mr-2"></i>Search Questions
+                                </label>
+                                <div class="search-input-group">
+                                    <input type="text" name="search" class="form-control search-input" 
+                                           placeholder="Search by title or description..." value="{{ search_query }}">
+                                    <button class="search-btn" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if selected_difficulty != 'all' or selected_category != 'all' or search_query %}
+                    <div class="active-filters">
+                        <span class="filter-label">Active Filters:</span>
+                        {% if selected_difficulty != 'all' %}
+                        <span class="filter-tag filter-tag-primary">{{ selected_difficulty|capfirst }}</span>
+                        {% endif %}
+                        {% if selected_category != 'all' %}
+                        <span class="filter-tag filter-tag-info">{{ selected_category|title }}</span>
+                        {% endif %}
+                        {% if search_query %}
+                        <span class="filter-tag filter-tag-secondary">"{{ search_query }}"</span>
+                        {% endif %}
+                        <a href="{% url 'dsa:questions' %}" class="btn btn-sm btn-outline-secondary ml-3">
+                            <i class="fas fa-times mr-1"></i>Clear All
+                        </a>
+                    </div>
+                    {% endif %}
                 </form>
             </div>
         </div>
+    </section>
 
-        <!-- Questions List -->
-        <div class="row">
-            {% for question in questions %}
-            <div class="col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-header">
-                        <h5 class="mb-0">{{ question.title }}</h5>
-                        <span class="badge badge-{% if question.difficulty == 'easy' %}success{% elif question.difficulty == 'medium' %}warning{% else %}danger{% endif %}">
-                            {{ question.get_difficulty_display }}
-                        </span>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">{{ question.description|truncatewords:30 }}</p>
-                        <div class="mb-2">
-                            <small class="text-muted">
-                                <i class="fas fa-folder mr-1"></i>{{ question.get_category_display }}
-                            </small>
+    <!-- Questions Grid -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            {% if questions %}
+            <div class="row">
+                {% for question in questions %}
+                <div class="col-lg-6 col-xl-4 mb-4">
+                    <div class="question-card animate__animated animate__fadeInUp" style="animation-delay: {{ forloop.counter0|floatformat:1 }}00ms">
+                        <div class="question-header">
+                            <div class="question-badges">
+                                <span class="difficulty-badge difficulty-{{ question.difficulty }}">
+                                    {{ question.get_difficulty_display }}
+                                </span>
+                                <span class="category-badge">
+                                    {{ question.get_category_display }}
+                                </span>
+                            </div>
+                            <div class="question-actions">
+                                <button class="action-btn view-question" data-question-id="{{ question.id }}" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
                         </div>
-                        <button class="btn btn-primary btn-sm view-question" 
-                                data-question-id="{{ question.id }}">
-                            <i class="fas fa-eye mr-1"></i>View Details
-                        </button>
+                        
+                        <div class="question-body">
+                            <h5 class="question-title">{{ question.title }}</h5>
+                            <p class="question-description">{{ question.description|truncatewords:20 }}</p>
+                            
+                            <div class="question-meta">
+                                <div class="meta-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span>{{ question.time_complexity|default:"O(n)" }}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-memory"></i>
+                                    <span>{{ question.space_complexity|default:"O(1)" }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="question-footer">
+                            <a href="{% url 'dsa:solve' question.id %}" class="solve-btn">
+                                <i class="fas fa-code mr-2"></i>Solve Challenge
+                            </a>
+                        </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
-            {% empty %}
-            <div class="col-12">
-                <div class="alert alert-info">
-                    No questions found matching your criteria.
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-illustration">
+                    <i class="fas fa-search fa-5x"></i>
                 </div>
+                <h3>No Questions Found</h3>
+                <p>No questions match your current search criteria. Try adjusting your filters or search terms.</p>
+                <a href="{% url 'dsa:questions' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-refresh mr-2"></i>Reset Filters
+                </a>
             </div>
-            {% endfor %}
-        </div>
+            {% endif %}
 
-        <!-- Pagination -->
-        {% if questions.has_other_pages %}
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center">
-                {% if questions.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ questions.previous_page_number }}{% if selected_difficulty != 'all' %}&difficulty={{ selected_difficulty }}{% endif %}{% if selected_category != 'all' %}&category={{ selected_category }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
-                        <i class="fas fa-chevron-left"></i>
-                    </a>
-                </li>
-                {% endif %}
-                
-                {% for num in questions.paginator.page_range %}
-                    {% if questions.number == num %}
+            <!-- Pagination -->
+            {% if questions.has_other_pages %}
+            <nav aria-label="Questions pagination" class="mt-5">
+                <ul class="pagination-custom justify-content-center">
+                    {% if questions.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% if selected_difficulty != 'all' %}&difficulty={{ selected_difficulty }}{% endif %}{% if selected_category != 'all' %}&category={{ selected_category }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+                            <i class="fas fa-angle-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ questions.previous_page_number }}{% if selected_difficulty != 'all' %}&difficulty={{ selected_difficulty }}{% endif %}{% if selected_category != 'all' %}&category={{ selected_category }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+                            <i class="fas fa-angle-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for num in questions.paginator.page_range %}
+                    {% if num == questions.number %}
                     <li class="page-item active">
                         <span class="page-link">{{ num }}</span>
                     </li>
@@ -160,49 +322,50 @@
                         <a class="page-link" href="?page={{ num }}{% if selected_difficulty != 'all' %}&difficulty={{ selected_difficulty }}{% endif %}{% if selected_category != 'all' %}&category={{ selected_category }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a>
                     </li>
                     {% endif %}
-                {% endfor %}
-                
-                {% if questions.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ questions.next_page_number }}{% if selected_difficulty != 'all' %}&difficulty={{ selected_difficulty }}{% endif %}{% if selected_category != 'all' %}&category={{ selected_category }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
-                        <i class="fas fa-chevron-right"></i>
-                    </a>
-                </li>
-                {% endif %}
-            </ul>
-        </nav>
-        {% endif %}
-    </div>
+                    {% endfor %}
+                    
+                    {% if questions.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ questions.next_page_number }}{% if selected_difficulty != 'all' %}&difficulty={{ selected_difficulty }}{% endif %}{% if selected_category != 'all' %}&category={{ selected_category }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+                            <i class="fas fa-angle-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ questions.paginator.num_pages }}{% if selected_difficulty != 'all' %}&difficulty={{ selected_difficulty }}{% endif %}{% if selected_category != 'all' %}&category={{ selected_category }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+                            <i class="fas fa-angle-double-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <div class="pagination-info">
+                    Showing {{ questions.start_index }} to {{ questions.end_index }} of {{ questions.paginator.count }} questions
+                </div>
+            </nav>
+            {% endif %}
+        </div>
+    </section>
 
     <!-- Question Detail Modal -->
-    <div class="modal fade" id="questionModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
+    <div class="modal fade" id="questionModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header border-0">
                     <h5 class="modal-title" id="questionTitle"></h5>
                     <button type="button" class="close" data-dismiss="modal">
                         <span>&times;</span>
                     </button>
                 </div>
                 <div class="modal-body" id="questionDetails">
-                    <!-- Question details will be loaded here -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Loading Modal -->
-    <div class="modal fade" id="loadingModal" tabindex="-1" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-body text-center">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="sr-only">Loading...</span>
+                    <div class="loading-state">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="mt-3">Loading question details...</p>
                     </div>
-                    <p class="mt-2 mb-0">Loading question details...</p>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="solveQuestionBtn">
+                        <i class="fas fa-code mr-2"></i>Solve This Challenge
+                    </button>
                 </div>
             </div>
         </div>
@@ -213,133 +376,146 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function() {
+            let currentQuestionId = null;
+            
+            // Question card hover effects
+            $('.question-card').hover(
+                function() {
+                    $(this).addClass('question-card-hover');
+                },
+                function() {
+                    $(this).removeClass('question-card-hover');
+                }
+            );
+            
+            // View question details
             $('.view-question').click(function() {
                 const questionId = $(this).data('question-id');
-                
-                // Show loading modal
-                $('#loadingModal').modal('show');
+                currentQuestionId = questionId;
+                loadQuestionDetails(questionId);
+            });
+            
+            function loadQuestionDetails(questionId) {
+                $('#questionModal').modal('show');
                 
                 $.ajax({
                     url: `/dsa/api/question/${questionId}/`,
                     method: 'GET',
-                    timeout: 10000, // 10 second timeout
                     success: function(data) {
                         if (data.success) {
                             const q = data.question;
                             $('#questionTitle').text(q.title);
                             
-                            // Sanitize and build HTML
                             let detailsHtml = `
-                                <div class="mb-3">
-                                    <h6><i class="fas fa-info-circle text-primary"></i> Description</h6>
-                                    <div class="border-left border-primary pl-3">
-                                        <p>${escapeHtml(q.description)}</p>
+                                <div class="question-detail-content">
+                                    <div class="detail-header">
+                                        <div class="detail-badges">
+                                            <span class="difficulty-badge difficulty-${q.difficulty}">${q.difficulty.charAt(0).toUpperCase() + q.difficulty.slice(1)}</span>
+                                            <span class="category-badge">${q.category.charAt(0).toUpperCase() + q.category.slice(1)}</span>
+                                        </div>
                                     </div>
-                                </div>
+                                    
+                                    <div class="detail-section">
+                                        <h6><i class="fas fa-info-circle text-primary mr-2"></i>Description</h6>
+                                        <p class="detail-text">${q.description}</p>
+                                    </div>
                             `;
                             
                             if (q.examples) {
                                 detailsHtml += `
-                                    <div class="mb-3">
-                                        <h6><i class="fas fa-code text-success"></i> Examples</h6>
-                                        <pre class="bg-light p-3 rounded">${escapeHtml(q.examples)}</pre>
+                                    <div class="detail-section">
+                                        <h6><i class="fas fa-lightbulb text-warning mr-2"></i>Examples</h6>
+                                        <pre class="detail-code">${q.examples}</pre>
                                     </div>
                                 `;
                             }
                             
                             if (q.constraints) {
                                 detailsHtml += `
-                                    <div class="mb-3">
-                                        <h6><i class="fas fa-exclamation-triangle text-warning"></i> Constraints</h6>
-                                        <div class="border-left border-warning pl-3">
-                                            <p>${escapeHtml(q.constraints)}</p>
-                                        </div>
-                                    </div>
-                                `;
-                            }
-                            
-                            if (q.solution_approach) {
-                                detailsHtml += `
-                                    <div class="mb-3">
-                                        <h6><i class="fas fa-lightbulb text-info"></i> Solution Approach</h6>
-                                        <div class="border-left border-info pl-3">
-                                            <p>${escapeHtml(q.solution_approach)}</p>
-                                        </div>
+                                    <div class="detail-section">
+                                        <h6><i class="fas fa-exclamation-triangle text-danger mr-2"></i>Constraints</h6>
+                                        <p class="detail-text">${q.constraints}</p>
                                     </div>
                                 `;
                             }
                             
                             if (q.time_complexity || q.space_complexity) {
                                 detailsHtml += `
-                                    <div class="mb-3">
-                                        <h6><i class="fas fa-chart-line text-danger"></i> Complexity Analysis</h6>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <small class="text-muted">Time Complexity:</small>
-                                                <p class="font-weight-bold">${escapeHtml(q.time_complexity || 'N/A')}</p>
+                                    <div class="detail-section">
+                                        <h6><i class="fas fa-tachometer-alt text-success mr-2"></i>Complexity Analysis</h6>
+                                        <div class="complexity-grid">
+                                            <div class="complexity-item">
+                                                <div class="complexity-icon">
+                                                    <i class="fas fa-clock"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="complexity-label">Time Complexity</div>
+                                                    <code class="complexity-value">${q.time_complexity || 'Not specified'}</code>
+                                                </div>
                                             </div>
-                                            <div class="col-md-6">
-                                                <small class="text-muted">Space Complexity:</small>
-                                                <p class="font-weight-bold">${escapeHtml(q.space_complexity || 'N/A')}</p>
+                                            <div class="complexity-item">
+                                                <div class="complexity-icon">
+                                                    <i class="fas fa-memory"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="complexity-label">Space Complexity</div>
+                                                    <code class="complexity-value">${q.space_complexity || 'Not specified'}</code>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 `;
                             }
                             
+                            detailsHtml += '</div>';
                             $('#questionDetails').html(detailsHtml);
-                            
-                            // Force hide loading modal and show question modal
-                            $('#loadingModal').modal('hide');
-                            cleanupModals();
-                            
-                            // Simple timeout to ensure loading modal is hidden
-                            setTimeout(function() {
-                                $('#questionModal').modal('show');
-                            }, 100);
-                            
-                        } else {
-                            $('#loadingModal').modal('hide');
-                            cleanupModals();
-                            alert('Error loading question details: ' + (data.error || 'Unknown error'));
                         }
                     },
-                    error: function(xhr, status, error) {
-                        console.error('AJAX Error:', status, error);
-                        $('#loadingModal').modal('hide');
-                        cleanupModals();
-                        
-                        if (status === 'timeout') {
-                            alert('Request timed out. Please try again.');
-                        } else {
-                            alert('Error loading question details. Please try again.');
-                        }
+                    error: function() {
+                        $('#questionDetails').html(`
+                            <div class="error-state">
+                                <i class="fas fa-exclamation-triangle text-danger"></i>
+                                <h5>Error Loading Question</h5>
+                                <p>Unable to load question details. Please try again.</p>
+                            </div>
+                        `);
                     }
                 });
-            });
-            
-            // Function to clean up modal issues
-            function cleanupModals() {
-                // Remove any lingering modal backdrops
-                $('.modal-backdrop').remove();
-                $('body').removeClass('modal-open');
-                
-                // Force remove the show class from loading modal
-                $('#loadingModal').removeClass('show');
             }
             
-            // Handle page unload to clean up modals
-            $(window).on('beforeunload', function() {
-                cleanupModals();
+            $('#solveQuestionBtn').click(function() {
+                if (currentQuestionId) {
+                    window.location.href = `/dsa/solve/${currentQuestionId}/`;
+                }
+            });
+            
+            // Random question button
+            $('#randomQuestionBtn').click(function() {
+                const questionCards = $('.question-card');
+                if (questionCards.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * questionCards.length);
+                    const randomCard = questionCards.eq(randomIndex);
+                    const solveLink = randomCard.find('.solve-btn').attr('href');
+                    if (solveLink) {
+                        window.location.href = solveLink;
+                    }
+                }
+            });
+            
+            // Smooth scroll to questions when filtering
+            $('form.filter-form').on('submit', function(e) {
+                setTimeout(function() {
+                    $('html, body').animate({
+                        scrollTop: $('.py-5.bg-light').offset().top - 100
+                    }, 500);
+                }, 100);
+            });
+            
+            // Add loading effect to cards
+            $('.question-card').each(function(index) {
+                $(this).css('animation-delay', (index * 100) + 'ms');
             });
         });
-        
-        // Helper function to escape HTML
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
     </script>
 </body>
 </html>
