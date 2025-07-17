@@ -44,7 +44,66 @@ body * {
 }
 
 /* Override the global text color for buttons specifically */
-.btn * {
+.btn, .btn * {
+    color: inherit !important;
+}
+
+/* Quick Action Button Fixes */
+.quick-action-btn {
+    background: #f8f9fa !important;
+    color: #2C3E50 !important;
+    border: 2px solid #e9ecef !important;
+    text-decoration: none !important;
+    display: block !important;
+    padding: 0.75rem 1rem !important;
+    border-radius: 10px !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.quick-action-btn:hover {
+    background: #4A90E2 !important;
+    color: white !important;
+    text-decoration: none !important;
+    transform: translateY(-2px) !important;
+    border-color: #4A90E2 !important;
+}
+
+.quick-action-btn i {
+    color: inherit !important;
+}
+
+/* Random Challenge Button Special Override */
+.quick-action-btn[onclick*="startRandomQuestion"] {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    border-color: #667eea !important;
+}
+
+.quick-action-btn[onclick*="startRandomQuestion"]:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%) !important;
+    color: white !important;
+}
+
+.quick-action-btn[onclick*="startRandomQuestion"] i {
+    color: white !important;
+}
+
+/* Practice Hero Button Fixes */
+.practice-hero .btn-outline-light {
+    color: white !important;
+    border-color: white !important;
+    background: transparent !important;
+}
+
+.practice-hero .btn-outline-light:hover {
+    background: white !important;
+    color: #667eea !important;
+    border-color: white !important;
+}
+
+.practice-hero .btn-outline-light i {
     color: inherit !important;
 }
 

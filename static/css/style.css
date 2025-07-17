@@ -537,7 +537,9 @@
     border-radius: 10px;
     font-weight: 500;
     transition: all 0.3s ease;
-    border: 2px solid transparent;
+    border: 2px solid #e9ecef;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
 }
 
 .quick-action-btn:hover {
@@ -546,6 +548,43 @@
     text-decoration: none;
     transform: translateY(-2px);
     border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+}
+
+.quick-action-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+}
+
+/* Random Challenge Button Special Styling */
+.quick-action-btn[onclick*="startRandomQuestion"] {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: #667eea;
+    font-weight: 600;
+    position: relative;
+    overflow: hidden;
+}
+
+.quick-action-btn[onclick*="startRandomQuestion"]:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.quick-action-btn[onclick*="startRandomQuestion"]:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.quick-action-btn[onclick*="startRandomQuestion"]:hover:before {
+    left: 100%;
 }
 
 /* Hint Modal Styles */
@@ -1168,7 +1207,7 @@ pre {
     border-bottom: 1px solid #e9ecef;
 }
 
-/* Form Controls */
+/* Form Controls - Simplified */
 .form-control:focus {
     border-color: var(--primary-color);
     box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
@@ -2111,87 +2150,4 @@ pre {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-}
-
-/* Additional fixes for DSA page text visibility */
-.filter-card {
-    background: white !important;
-    color: #2C3E50 !important;
-}
-
-.filter-card h4 {
-    color: #2C3E50 !important;
-}
-
-.filter-card p {
-    color: #6c757d !important;
-}
-
-.filter-card .text-muted {
-    color: #6c757d !important;
-}
-
-.filter-select option {
-    color: #2C3E50 !important;
-    background-color: white !important;
-}
-
-/* Ensure dropdown text is visible */
-select.filter-select,
-select.form-control {
-    color: #2C3E50 !important;
-    background-color: white !important;
-}
-
-/* Fix for any remaining invisible text */
-.filter-header, .filter-group, .filter-form {
-    color: #2C3E50 !important;
-}
-
-/* More specific dropdown fixes */
-.filter-select,
-.filter-select:focus,
-.filter-select:active {
-    color: #2C3E50 !important;
-    background-color: #ffffff !important;
-    background-image: none !important;
-    -webkit-appearance: menulist !important;
-    -moz-appearance: menulist !important;
-    appearance: menulist !important;
-}
-
-.filter-select option,
-.filter-select option:checked,
-.filter-select option:hover {
-    color: #2C3E50 !important;
-    background-color: #ffffff !important;
-    background: #ffffff !important;
-}
-
-/* Force visibility for all select elements in filter area */
-.filter-card select,
-.filter-form select,
-.py-5 select {
-    color: #2C3E50 !important;
-    background-color: #ffffff !important;
-    background: #ffffff !important;
-}
-
-.filter-card select option,
-.filter-form select option,
-.py-5 select option {
-    color: #2C3E50 !important;
-    background-color: #ffffff !important;
-    background: #ffffff !important;
-}
-
-/* Override Bootstrap select styling */
-.form-control {
-    color: #2C3E50 !important;
-    background-color: #ffffff !important;
-}
-
-.form-control option {
-    color: #2C3E50 !important;
-    background-color: #ffffff !important;
 }

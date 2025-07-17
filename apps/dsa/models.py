@@ -28,6 +28,7 @@ class DSAQuestion(models.Model):
     solution_approach = models.TextField(blank=True)
     time_complexity = models.CharField(max_length=50, blank=True)
     space_complexity = models.CharField(max_length=50, blank=True)
+    leetcode_url = models.URLField(blank=True, help_text="Direct link to the LeetCode problem")
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
