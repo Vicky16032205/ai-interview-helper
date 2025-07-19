@@ -152,43 +152,8 @@ def upload_resume_view(request):
                 resume_file=file_path
             )
             
-            # For text files, we can directly analyze
-            # For other formats, we'll provide a simulated analysis
-            if file_extension == 'txt':
-                feedback = analyze_resume(full_path)
-            else:
-                # Simulated analysis for non-text files
-                feedback = {
-                    "score": 8,
-                    "strengths": [
-                        "Professional format and structure",
-                        "Clear contact information",
-                        "Relevant work experience listed",
-                        "Education section included"
-                    ],
-                    "improvements": [
-                        "Add more quantifiable achievements with specific numbers",
-                        "Include relevant industry keywords for ATS optimization",
-                        "Consider adding a professional summary section",
-                        "Ensure consistent bullet point formatting"
-                    ],
-                    "missing_sections": [
-                        "Skills section could be more comprehensive",
-                        "Consider adding relevant certifications",
-                        "Projects section might enhance your profile"
-                    ],
-                    "ats_score": 82,
-                    "recommendations": [
-                        "Use action verbs at the beginning of bullet points",
-                        "Include metrics (percentages, dollar amounts, timeframes)",
-                        "Add industry-specific keywords from job descriptions",
-                        "Keep resume to 1-2 pages maximum",
-                        "Use a clean, professional font (Arial, Calibri, or Times New Roman)",
-                        "Save and submit in PDF format to preserve formatting"
-                    ],
-                    "formatting_score": 9,
-                    "content_score": 8
-                }
+            # Analyze resume using Gemini AI
+            feedback = analyze_resume(full_path, file_extension)
             
             analysis.analysis_result = feedback
             analysis.save()
@@ -210,6 +175,58 @@ def upload_resume_view(request):
             return JsonResponse({
                 'success': False,
                 'error': 'An error occurred while analyzing your resume. Please try again.'
+            }, status=500)
+    
+    return JsonResponse({
+        'success': False,
+        'error': 'No resume file provided. Please select a file to upload.'
+    }, status=400)
+
+@csrf_exempt
+def generate_resume_questions_view(request):
+    """API endpoint to generate questions based on resume content"""
+    if request.method == 'POST' and request.FILES.get('resume'):
+        try:
+            resume_file = request.FILES['resume']
+            difficulty = request.POST.get('difficulty', 'medium')
+            
+            # Validate file type
+            allowed_extensions = ['.pdf', '.doc', '.docx', '.txt']
+            file_extension = resume_file.name.lower().split('.')[-1]
+            if f'.{file_extension}' not in allowed_extensions:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Invalid file type. Please upload PDF, DOC, DOCX, or TXT files only.'
+                }, status=400)
+            
+            # Save file temporarily
+            import os
+            import uuid
+            unique_filename = f"{uuid.uuid4()}_{resume_file.name}"
+            file_path = default_storage.save(f'temp_resumes/{unique_filename}', resume_file)
+            full_path = default_storage.path(file_path)
+            
+            # Generate questions based on resume
+            from .utils import generate_questions_from_resume
+            questions = generate_questions_from_resume(full_path, file_extension, difficulty)
+            
+            # Clean up the uploaded file
+            try:
+                os.remove(full_path)
+            except:
+                pass
+            
+            return JsonResponse({
+                'success': True,
+                'questions': questions,
+                'message': 'Questions generated successfully based on your resume!'
+            })
+            
+        except Exception as e:
+            print(f"Question generation error: {e}")
+            return JsonResponse({
+                'success': False,
+                'error': 'An error occurred while generating questions. Please try again.'
             }, status=500)
     
     return JsonResponse({

@@ -1,0 +1,179 @@
+/* DSA Practice Page Styles */
+
+.dynamic-controls {
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+    margin-top: 15px;
+}
+
+/* Button text visibility fixes */
+.dynamic-question-btn, .adaptive-question-btn {
+    font-weight: 600 !important;
+    text-shadow: none !important;
+    color: white !important;
+    border: none !important;
+    transition: all 0.3s ease;
+}
+
+.dynamic-question-btn span, .adaptive-question-btn span {
+    color: white !important;
+    font-weight: 600 !important;
+    text-shadow: none !important;
+}
+
+.btn-primary.dynamic-question-btn {
+    background-color: #007bff !important;
+    border-color: #007bff !important;
+}
+
+.btn-danger.dynamic-question-btn {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+}
+
+.btn-success.adaptive-question-btn {
+    background-color: #28a745 !important;
+    border-color: #28a745 !important;
+}
+
+.dynamic-question-btn:hover, .adaptive-question-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    color: white !important;
+}
+
+.dynamic-question-btn:hover span, .adaptive-question-btn:hover span {
+    color: white !important;
+}
+
+.generated-badge {
+    background: linear-gradient(45deg, #4CAF50, #45a049);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.fallback-badge {
+    background: linear-gradient(45deg, #FF9800, #F57C00);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.loading-questions, .error-questions {
+    text-align: center;
+    padding: 60px 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+.save-btn-small {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin-left: 5px;
+}
+
+.save-btn-small:hover {
+    background: #218838;
+}
+
+/* Timer debugging styles */
+.timer-btn {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    z-index: 10;
+    position: relative;
+}
+
+.timer-btn:focus {
+    outline: 2px solid #007bff;
+}
+
+/* Dynamic Question Styles */
+.dynamic-question-btn.loading,
+.adaptive-question-btn.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.dynamic-question-btn.loading::after,
+.adaptive-question-btn.loading::after {
+    content: "⟳";
+    animation: spin 1s linear infinite;
+    margin-left: 5px;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.generated-badge {
+    background: linear-gradient(45deg, #e74c3c, #f39c12);
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.save-btn-small {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 5px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.save-btn-small:hover {
+    background: #219a52;
+    transform: translateY(-1px);
+}
+
+.questions-grid .practice-question-item:last-child {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+/* Hint Modal Styles */
+.hint-content {
+    padding: 20px 0;
+}
+
+.hint-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+}
+
+.hint-item i {
+    margin-right: 15px;
+    font-size: 1.2rem;
+}
+
+.hint-item span {
+    font-size: 14px;
+    color: #333;
+}
+
+/* Practice Question Items */
+.practice-question-item.question-hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}

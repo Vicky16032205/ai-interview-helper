@@ -20,6 +20,18 @@ document.addEventListener('DOMContentLoaded', function() {
     function init() {
         if (analyzeButton) analyzeButton.disabled = true;
         updateCodePlaceholder('python');
+        
+        // Debug logging to check if elements exist
+        console.log('Elements found:');
+        console.log('- difficultyButtons:', difficultyButtons.length);
+        console.log('- questionItems:', questionItems.length);
+        console.log('- codeEditor:', !!codeEditor);
+        console.log('- languageSelect:', !!languageSelect);
+        console.log('- analyzeButton (code):', !!analyzeButton);
+        console.log('- uploadArea:', !!uploadArea);
+        console.log('- fileInput:', !!fileInput);
+        console.log('- analyzeResumeBtn:', !!analyzeResumeBtn);
+        
         setupEventListeners();
     }
 
@@ -156,11 +168,34 @@ func solution() {
         // Show loading state
         setButtonLoading(this, 'Analyzing...');
         
-        // Simulate AI analysis
-        setTimeout(() => {
-            showAnalysisResults(code, language, selectedQuestion);
+        // Make actual API call
+        fetch('/interview/api/analyze-code/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                code: code,
+                language: language,
+                question: selectedQuestion
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showCodeAnalysisResults(data.feedback);
+            } else {
+                showNotification(data.error || 'Error analyzing code', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error analyzing code. Please try again.', 'danger');
+        })
+        .finally(() => {
             resetButtonLoading(this, 'Analyze with AI', 'fas fa-brain');
-        }, 2000);
+        });
     }
 
     function handleDragOver(e) {
@@ -215,8 +250,8 @@ func solution() {
             return false;
         }
         
-        if (file.size > 5 * 1024 * 1024) { // 5MB limit
-            showNotification('File size should be less than 5MB.', 'danger');
+        if (file.size > 10 * 1024 * 1024) { // 10MB limit to match backend
+            showNotification('File size should be less than 10MB.', 'danger');
             return false;
         }
         
@@ -224,13 +259,79 @@ func solution() {
     }
 
     function handleResumeAnalysis() {
-        setButtonLoading(this, 'Analyzing Resume...');
+        const fileInput = document.getElementById('resumeFile');
+        const analyzeButton = document.getElementById('analyzeResume');
         
-        // Simulate resume analysis
-        setTimeout(() => {
-            showResumeAnalysis();
-            resetButtonLoading(this, 'Analyze Resume', 'fas fa-search');
-        }, 2000);
+        // Debug logging
+        console.log('File input element:', fileInput);
+        console.log('Analyze button:', analyzeButton);
+        
+        if (!fileInput) {
+            showNotification('File input not found. Please refresh the page and try again.', 'danger');
+            return;
+        }
+        
+        if (!fileInput.files || fileInput.files.length === 0) {
+            showNotification('Please select a resume file first!', 'warning');
+            return;
+        }
+        
+        const file = fileInput.files[0];
+        console.log('Selected file:', file.name);
+        
+        const formData = new FormData();
+        formData.append('resume', file);
+        
+        if (analyzeButton) {
+            setButtonLoading(analyzeButton, 'Analyzing Resume...');
+        }
+        
+        fetch('/interview/api/upload-resume/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showResumeAnalysisResults(data.feedback);
+                // After resume analysis, generate custom questions
+                generateCustomQuestions(file);
+            } else {
+                showNotification(data.error || 'Error analyzing resume', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error analyzing resume. Please try again.', 'danger');
+        })
+        .finally(() => {
+            if (analyzeButton) {
+                resetButtonLoading(analyzeButton, 'Analyze Resume', 'fas fa-search');
+            }
+        });
+    }
+    
+    function generateCustomQuestions(file) {
+        const formData = new FormData();
+        formData.append('resume', file);
+        formData.append('difficulty', selectedDifficulty);
+        
+        fetch('/interview/api/generate-questions/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateQuestionsDisplay(data.questions);
+                showNotification('Custom questions generated based on your resume!', 'success');
+            } else {
+                console.error('Question generation failed:', data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error generating questions:', error);
+        });
     }
 
     function setButtonLoading(button, text) {
@@ -243,7 +344,7 @@ func solution() {
         button.disabled = false;
     }
 
-    function showAnalysisResults(code, language, question) {
+    function showCodeAnalysisResults(feedback) {
         const resultsSection = document.getElementById('resultsSection');
         const analysisResults = document.getElementById('analysisResults');
         
@@ -252,27 +353,119 @@ func solution() {
         analysisResults.innerHTML = `
             <div class="row">
                 <div class="col-md-6">
-                    <h6><i class="fas fa-code mr-2"></i>Code Quality</h6>
+                    <h6><i class="fas fa-code mr-2"></i>Code Quality Score</h6>
                     <div class="progress mb-2">
-                        <div class="progress-bar bg-success" style="width: 85%"></div>
+                        <div class="progress-bar bg-${getScoreColor(feedback.score)}" style="width: ${feedback.score * 10}%"></div>
                     </div>
-                    <small class="text-muted">85% - Good structure and readability</small>
+                    <small class="text-muted">${feedback.score}/10</small>
                 </div>
                 <div class="col-md-6">
-                    <h6><i class="fas fa-tachometer-alt mr-2"></i>Time Complexity</h6>
-                    <div class="progress mb-2">
-                        <div class="progress-bar bg-warning" style="width: 70%"></div>
-                    </div>
-                    <small class="text-muted">70% - Can be optimized further</small>
+                    <h6><i class="fas fa-exclamation-triangle mr-2"></i>Issues Found</h6>
+                    <span class="badge badge-${feedback.issues.length > 0 ? 'warning' : 'success'}">
+                        ${feedback.issues.length} issues
+                    </span>
                 </div>
             </div>
             <div class="row mt-3">
-                <div class="col-12">
+                <div class="col-md-6">
                     <h6><i class="fas fa-lightbulb mr-2"></i>Suggestions</h6>
                     <ul class="list-unstyled">
-                        <li><i class="fas fa-check text-success mr-2"></i>Good use of ${language} conventions</li>
-                        <li><i class="fas fa-info text-info mr-2"></i>Consider edge cases for empty inputs</li>
-                        <li><i class="fas fa-exclamation text-warning mr-2"></i>Algorithm complexity could be improved</li>
+                        ${feedback.suggestions.map(suggestion => `
+                            <li><i class="fas fa-check text-info mr-2"></i>${suggestion}</li>
+                        `).join('')}
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h6><i class="fas fa-star mr-2"></i>Best Practices</h6>
+                    <ul class="list-unstyled">
+                        ${feedback.best_practices.map(practice => `
+                            <li><i class="fas fa-check text-success mr-2"></i>${practice}</li>
+                        `).join('')}
+                    </ul>
+                </div>
+            </div>
+            ${feedback.issues.length > 0 ? `
+            <div class="row mt-3">
+                <div class="col-12">
+                    <h6><i class="fas fa-bug mr-2"></i>Critical Issues</h6>
+                    <ul class="list-unstyled">
+                        ${feedback.issues.map(issue => `
+                            <li><i class="fas fa-exclamation text-warning mr-2"></i>${issue}</li>
+                        `).join('')}
+                    </ul>
+                </div>
+            </div>
+            ` : ''}
+        `;
+        
+        resultsSection.style.display = 'block';
+        resultsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function showResumeAnalysisResults(feedback) {
+        const resultsSection = document.getElementById('resultsSection');
+        const analysisResults = document.getElementById('analysisResults');
+        
+        if (!resultsSection || !analysisResults) return;
+        
+        analysisResults.innerHTML = `
+            <div class="row">
+                <div class="col-md-4">
+                    <h6><i class="fas fa-chart-line mr-2"></i>Overall Score</h6>
+                    <div class="progress mb-2">
+                        <div class="progress-bar bg-${getScoreColor(feedback.score)}" style="width: ${feedback.score * 10}%"></div>
+                    </div>
+                    <small class="text-muted">${feedback.score}/10</small>
+                </div>
+                <div class="col-md-4">
+                    <h6><i class="fas fa-robot mr-2"></i>ATS Score</h6>
+                    <div class="progress mb-2">
+                        <div class="progress-bar bg-${getATSScoreColor(feedback.ats_score)}" style="width: ${feedback.ats_score}%"></div>
+                    </div>
+                    <small class="text-muted">${feedback.ats_score}/100</small>
+                </div>
+                <div class="col-md-4">
+                    <h6><i class="fas fa-user-graduate mr-2"></i>Experience Level</h6>
+                    <span class="badge badge-primary">${feedback.experience_level || 'Mid-Level'}</span>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <h6><i class="fas fa-thumbs-up mr-2"></i>Strengths</h6>
+                    <ul class="list-unstyled">
+                        ${feedback.strengths.map(strength => `
+                            <li><i class="fas fa-check text-success mr-2"></i>${strength}</li>
+                        `).join('')}
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h6><i class="fas fa-tools mr-2"></i>Areas for Improvement</h6>
+                    <ul class="list-unstyled">
+                        ${feedback.improvements.map(improvement => `
+                            <li><i class="fas fa-arrow-up text-warning mr-2"></i>${improvement}</li>
+                        `).join('')}
+                    </ul>
+                </div>
+            </div>
+            ${feedback.skills_identified && feedback.skills_identified.length > 0 ? `
+            <div class="row mt-3">
+                <div class="col-12">
+                    <h6><i class="fas fa-code mr-2"></i>Skills Identified</h6>
+                    <div class="d-flex flex-wrap">
+                        ${feedback.skills_identified.map(skill => `
+                            <span class="badge badge-secondary mr-1 mb-1">${skill}</span>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+            ` : ''}
+            <div class="row mt-3">
+                <div class="col-12">
+                    <h6><i class="fas fa-lightbulb mr-2"></i>Recommendations</h6>
+                    <ul class="list-unstyled">
+                        ${feedback.recommendations.map(rec => `
+                            <li><i class="fas fa-star text-info mr-2"></i>${rec}</li>
+                        `).join('')}
                     </ul>
                 </div>
             </div>
@@ -281,49 +474,40 @@ func solution() {
         resultsSection.style.display = 'block';
         resultsSection.scrollIntoView({ behavior: 'smooth' });
     }
-
-    function showResumeAnalysis() {
-        const resultsSection = document.getElementById('resultsSection');
-        const analysisResults = document.getElementById('analysisResults');
+    
+    function updateQuestionsDisplay(questions) {
+        const questionsContainer = document.getElementById('questionsContainer');
+        if (!questionsContainer || !questions || questions.length === 0) return;
         
-        if (!resultsSection || !analysisResults) return;
-        
-        analysisResults.innerHTML = `
-            <div class="row">
-                <div class="col-md-4">
-                    <h6><i class="fas fa-user-graduate mr-2"></i>Experience Level</h6>
-                    <div class="badge badge-primary">Mid-Level</div>
-                </div>
-                <div class="col-md-4">
-                    <h6><i class="fas fa-code mr-2"></i>Top Skills</h6>
-                    <div class="d-flex flex-wrap">
-                        <span class="badge badge-secondary mr-1 mb-1">Python</span>
-                        <span class="badge badge-secondary mr-1 mb-1">JavaScript</span>
-                        <span class="badge badge-secondary mr-1 mb-1">System Design</span>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <h6><i class="fas fa-chart-line mr-2"></i>Match Score</h6>
-                    <div class="progress">
-                        <div class="progress-bar bg-success" style="width: 90%"></div>
-                    </div>
-                    <small class="text-muted">90% match for technical roles</small>
-                </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col-12">
-                    <h6><i class="fas fa-question-circle mr-2"></i>Recommended Questions</h6>
-                    <div class="list-group">
-                        <div class="list-group-item">Database optimization strategies</div>
-                        <div class="list-group-item">RESTful API design patterns</div>
-                        <div class="list-group-item">Microservices communication</div>
+        questionsContainer.innerHTML = questions.map((q, index) => `
+            <div class="question-item" data-question="custom_${index}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-1">${q.category}</h6>
+                        <p class="mb-0 text-muted">${q.question}</p>
+                        <small class="text-info">${q.explanation}</small>
                     </div>
                 </div>
             </div>
-        `;
+        `).join('');
         
-        resultsSection.style.display = 'block';
-        resultsSection.scrollIntoView({ behavior: 'smooth' });
+        // Re-attach event listeners to new question items
+        const newQuestionItems = questionsContainer.querySelectorAll('.question-item');
+        newQuestionItems.forEach(item => {
+            item.addEventListener('click', handleQuestionSelection);
+        });
+    }
+    
+    function getScoreColor(score) {
+        if (score >= 8) return 'success';
+        if (score >= 6) return 'warning';
+        return 'danger';
+    }
+    
+    function getATSScoreColor(score) {
+        if (score >= 80) return 'success';
+        if (score >= 60) return 'warning';
+        return 'danger';
     }
 
     // Use the showNotification function from main.js if available
@@ -331,5 +515,21 @@ func solution() {
         window.showNotification = function(message, type) {
             alert(message);
         };
+    }
+    
+    // CSRF token helper function
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
     }
 });

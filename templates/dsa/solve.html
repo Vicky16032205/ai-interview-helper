@@ -223,43 +223,6 @@
                     <h4 class="mb-4">
                         <i class="fas fa-external-link-alt mr-2 text-success"></i>Practice on LeetCode
                     </h4>
-                    
-                    {% comment %} <div class="practice-card">
-                        <div class="card border-0 shadow">
-                            <div class="card-body text-center p-5">
-                                <div class="mb-4">
-                                    <i class="fab fa-leetcode fa-4x text-warning"></i>
-                                </div>
-                                <h5 class="card-title mb-3">{{ question.title }}</h5>
-                                <p class="card-text text-muted mb-4">
-                                    Practice this problem on LeetCode with their interactive code editor, 
-                                    test cases, and instant feedback.
-                                </p>
-                                
-                                {% if question.leetcode_url %}
-                                    <a href="{{ question.leetcode_url }}" 
-                                       target="_blank" 
-                                       class="btn btn-lg btn-warning text-white">
-                                        <i class="fab fa-leetcode mr-2"></i>Solve on LeetCode
-                                    </a>
-                                {% else %}
-                                    <a href="https://leetcode.com/problemset/all/?search={{ question.title|urlencode }}" 
-                                       target="_blank" 
-                                       class="btn btn-lg btn-warning text-white">
-                                        <i class="fab fa-leetcode mr-2"></i>Find on LeetCode
-                                    </a>
-                                {% endif %}
-                                
-                                <div class="mt-4">
-                                    <small class="text-muted">
-                                        <i class="fas fa-info-circle mr-1"></i>
-                                        Opens in a new tab
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                    </div> {% endcomment %}
-
                     <div class="practice-card">
                         <div class="card border-0 shadow">
                             <div class="card-body text-center p-5">

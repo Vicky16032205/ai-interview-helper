@@ -5,14 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DSA Practice Session - AI Interview Helper</title>
     {% load static %}
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/dropdown-fixes.css' %}">
-    <link rel="stylesheet" href="{% static 'css/visibility-fixes.css' %}">
+    {% comment %} <link rel="stylesheet" href="{% static 'css/visibility-fixes.css' %}"> {% endcomment %}
+    <link rel="stylesheet" href="{% static 'css/practice.css' %}">
 </head>
 <body>
+    {% csrf_token %}
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
         <div class="container">
@@ -31,7 +35,7 @@
                         <a class="nav-link" href="{% url 'interview:hr' %}">HR Interview</a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'dsa:questions' %}">DSA Practice</a>
+                        <a class="nav-link" href="{% url 'dsa:questions' %}">DSA Practice <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'core:progress' %}">Progress</a>
@@ -74,6 +78,32 @@
                             <span class="question-count-badge">{{ questions.count }} Questions</span>
                         </div>
                         <p class="text-muted mb-0">Complete these problems to improve your algorithmic thinking</p>
+                        
+                        <!-- Dynamic Question Generation Controls -->
+                        <div class="dynamic-controls mt-3">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="btn-group w-100" role="group" aria-label="Question Generation">
+                                        <button type="button" class="btn btn-info dynamic-question-btn" 
+                                                data-difficulty="easy" data-count="5" style="color: white !important;">
+                                            <i class="fas fa-plus mr-1"></i><span style="color: white !important;">Easy Questions</span>
+                                        </button>
+                                        <button type="button" class="btn btn-primary dynamic-question-btn" 
+                                                data-difficulty="medium" data-count="5" style="color: white !important;">
+                                            <i class="fas fa-plus mr-1"></i><span style="color: white !important;">Medium Questions</span>
+                                        </button>
+                                        <button type="button" class="btn btn-danger dynamic-question-btn" 
+                                                data-difficulty="hard" data-count="5" style="color: white !important;">
+                                            <i class="fas fa-plus mr-1"></i><span style="color: white !important;">Hard Questions</span>
+                                        </button>
+                                        <button type="button" class="btn btn-success adaptive-question-btn" 
+                                                data-count="5" style="color: white !important;">
+                                            <i class="fas fa-brain mr-1"></i><span style="color: white !important;">Adaptive Questions</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="practice-card-body">
@@ -125,53 +155,6 @@
                         {% endif %}
                     </div>
                 </div>
-                
-                <!-- Session Summary -->
-                <div class="practice-card mt-4 animate__animated animate__fadeInUp animate__delay-2s">
-                    <div class="practice-card-header">
-                        <h4><i class="fas fa-chart-line mr-2"></i>Session Analytics</h4>
-                    </div>
-                    <div class="practice-card-body">
-                        <div class="analytics-grid">
-                            <div class="analytics-item">
-                                <div class="analytics-icon bg-success">
-                                    <i class="fas fa-check"></i>
-                                </div>
-                                <div class="analytics-content">
-                                    <h3 id="solvedCount">0</h3>
-                                    <p>Solved</p>
-                                </div>
-                            </div>
-                            <div class="analytics-item">
-                                <div class="analytics-icon bg-warning">
-                                    <i class="fas fa-clock"></i>
-                                </div>
-                                <div class="analytics-content">
-                                    <h3 id="attemptedCount">0</h3>
-                                    <p>Attempted</p>
-                                </div>
-                            </div>
-                            <div class="analytics-item">
-                                <div class="analytics-icon bg-info">
-                                    <i class="fas fa-stopwatch"></i>
-                                </div>
-                                <div class="analytics-content">
-                                    <h3 id="averageTime">0:00</h3>
-                                    <p>Avg Time</p>
-                                </div>
-                            </div>
-                            <div class="analytics-item">
-                                <div class="analytics-icon bg-primary">
-                                    <i class="fas fa-percentage"></i>
-                                </div>
-                                <div class="analytics-content">
-                                    <h3 id="accuracyRate">0%</h3>
-                                    <p>Accuracy</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
             
             <!-- Sidebar -->
@@ -184,7 +167,7 @@
                     <div class="sidebar-card-body">
                         <div class="timer-display">
                             <div class="timer-circle">
-                                <h2 id="timer">00:00:00</h2>
+                                <h2 id="timer" style="font-family: 'Courier New', monospace; font-size: 1.5rem; color: #333;">00:00:00</h2>
                             </div>
                             <div class="timer-controls">
                                 <button class="timer-btn timer-btn-start" id="startTimer">
@@ -196,51 +179,6 @@
                                 <button class="timer-btn timer-btn-reset" id="resetTimer">
                                     <i class="fas fa-stop"></i>
                                 </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Session Progress -->
-                <div class="practice-sidebar-card mt-4 animate__animated animate__fadeInRight animate__delay-1s">
-                    <div class="sidebar-card-header">
-                        <h5><i class="fas fa-chart-pie mr-2"></i>Progress Tracker</h5>
-                    </div>
-                    <div class="sidebar-card-body">
-                        <div class="progress-section">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="progress-label">Overall Progress</span>
-                                <span class="progress-value" id="progressPercent">0%</span>
-                            </div>
-                            <div class="progress-bar-custom">
-                                <div class="progress-fill" id="progressBar" style="width: 0%"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="difficulty-breakdown">
-                            <h6 class="breakdown-title">Difficulty Breakdown</h6>
-                            <div class="breakdown-grid">
-                                <div class="breakdown-item">
-                                    <div class="breakdown-circle bg-success">E</div>
-                                    <div class="breakdown-content">
-                                        <span class="breakdown-label">Easy</span>
-                                        <span class="breakdown-count" id="easyProgress">0/0</span>
-                                    </div>
-                                </div>
-                                <div class="breakdown-item">
-                                    <div class="breakdown-circle bg-warning">M</div>
-                                    <div class="breakdown-content">
-                                        <span class="breakdown-label">Medium</span>
-                                        <span class="breakdown-count" id="mediumProgress">0/0</span>
-                                    </div>
-                                </div>
-                                <div class="breakdown-item">
-                                    <div class="breakdown-circle bg-danger">H</div>
-                                    <div class="breakdown-content">
-                                        <span class="breakdown-label">Hard</span>
-                                        <span class="breakdown-count" id="hardProgress">0/0</span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -259,12 +197,6 @@
                             <button class="quick-action-btn" onclick="startRandomQuestion()">
                                 <i class="fas fa-random mr-2"></i>Random Challenge
                             </button>
-                            <button class="quick-action-btn" onclick="showHints()">
-                                <i class="fas fa-lightbulb mr-2"></i>Show Hints
-                            </button>
-                            <a href="{% url 'core:progress' %}" class="quick-action-btn">
-                                <i class="fas fa-chart-line mr-2"></i>View Progress
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -301,381 +233,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            let startTime = null;
-            let timerInterval = null;
-            let isPaused = false;
-            let pausedTime = 0;
-            let currentModalQuestionId = null;
-            
-            // Timer functionality with enhanced UI
-            function updateTimer() {
-                const currentTime = new Date().getTime();
-                const elapsed = currentTime - startTime + pausedTime;
-                
-                const hours = Math.floor(elapsed / (1000 * 60 * 60));
-                const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((elapsed % (1000 * 60)) / 1000);
-                
-                $('#timer').text(
-                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-                );
-            }
-            
-            $('#startTimer').click(function() {
-                if (!isPaused) {
-                    startTime = new Date().getTime();
-                    pausedTime = 0;
-                } else {
-                    startTime = new Date().getTime();
-                    isPaused = false;
-                }
-                
-                timerInterval = setInterval(updateTimer, 1000);
-                $(this).hide();
-                $('#pauseTimer').show();
-                $('.timer-circle').addClass('timer-running');
-            });
-            
-            $('#pauseTimer').click(function() {
-                if (timerInterval) {
-                    clearInterval(timerInterval);
-                    const currentTime = new Date().getTime();
-                    pausedTime += currentTime - startTime;
-                    isPaused = true;
-                    
-                    $(this).hide();
-                    $('#startTimer').show();
-                    $('.timer-circle').removeClass('timer-running');
-                }
-            });
-            
-            $('#resetTimer').click(function() {
-                if (timerInterval) {
-                    clearInterval(timerInterval);
-                }
-                startTime = null;
-                pausedTime = 0;
-                isPaused = false;
-                $('#timer').text('00:00:00');
-                $('#pauseTimer').hide();
-                $('#startTimer').show();
-                $('.timer-circle').removeClass('timer-running');
-            });
-            
-            // Question interaction with enhanced animations
-            $('.view-details').click(function() {
-                const questionId = $(this).data('question-id');
-                currentModalQuestionId = questionId;
-                loadQuestionDetails(questionId);
-            });
-            
-            function loadQuestionDetails(questionId) {
-                $('#questionModal').modal('show');
-                $('#modalQuestionDetails').html(`
-                    <div class="loading-state">
-                        <div class="spinner-border text-primary" role="status"></div>
-                        <p class="mt-3">Loading question details...</p>
-                    </div>
-                `);
-                
-                $.ajax({
-                    url: `/dsa/api/question/${questionId}/`,
-                    method: 'GET',
-                    success: function(data) {
-                        if (data.success) {
-                            const q = data.question;
-                            $('#modalQuestionTitle').text(q.title);
-                            
-                            let detailsHtml = `
-                                <div class="question-detail-content">
-                                    <div class="detail-header">
-                                        <div class="detail-badges">
-                                            <span class="difficulty-badge difficulty-${q.difficulty}">${q.difficulty}</span>
-                                            <span class="category-badge">${q.category}</span>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="detail-section">
-                                        <h6><i class="fas fa-info-circle text-primary mr-2"></i>Description</h6>
-                                        <p class="detail-text">${q.description}</p>
-                                    </div>
-                            `;
-                            
-                            if (q.examples) {
-                                detailsHtml += `
-                                    <div class="detail-section">
-                                        <h6><i class="fas fa-lightbulb text-warning mr-2"></i>Examples</h6>
-                                        <pre class="detail-code">${q.examples}</pre>
-                                    </div>
-                                `;
-                            }
-                            
-                            if (q.constraints) {
-                                detailsHtml += `
-                                    <div class="detail-section">
-                                        <h6><i class="fas fa-exclamation-triangle text-danger mr-2"></i>Constraints</h6>
-                                        <p class="detail-text">${q.constraints}</p>
-                                    </div>
-                                `;
-                            }
-                            
-                            if (q.time_complexity || q.space_complexity) {
-                                detailsHtml += `
-                                    <div class="detail-section">
-                                        <h6><i class="fas fa-tachometer-alt text-success mr-2"></i>Complexity Analysis</h6>
-                                        <div class="complexity-grid">
-                                            <div class="complexity-item">
-                                                <div class="complexity-icon">
-                                                    <i class="fas fa-clock"></i>
-                                                </div>
-                                                <div>
-                                                    <div class="complexity-label">Time Complexity</div>
-                                                    <code class="complexity-value">${q.time_complexity || 'N/A'}</code>
-                                                </div>
-                                            </div>
-                                            <div class="complexity-item">
-                                                <div class="complexity-icon">
-                                                    <i class="fas fa-memory"></i>
-                                                </div>
-                                                <div>
-                                                    <div class="complexity-label">Space Complexity</div>
-                                                    <code class="complexity-value">${q.space_complexity || 'N/A'}</code>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `;
-                            }
-                            
-                            detailsHtml += '</div>';
-                            $('#modalQuestionDetails').html(detailsHtml);
-                        }
-                    },
-                    error: function() {
-                        $('#modalQuestionDetails').html(`
-                            <div class="error-state">
-                                <i class="fas fa-exclamation-triangle text-danger"></i>
-                                <h5>Error Loading Question</h5>
-                                <p>Unable to load question details. Please try again.</p>
-                            </div>
-                        `);
-                    }
-                });
-            }
-            
-            $('#modalSolveBtn').click(function() {
-                if (currentModalQuestionId) {
-                    window.location.href = `/dsa/solve/${currentModalQuestionId}/`;
-                }
-            });
-            
-            // Enhanced progress tracking
-            function updateProgress() {
-                const totalQuestions = $('.practice-question-item').length;
-                const solvedQuestions = $('.practice-question-item .status-solved').length;
-                const attemptedQuestions = $('.practice-question-item .status-attempted').length;
-                
-                const progressPercent = totalQuestions > 0 ? Math.round((solvedQuestions / totalQuestions) * 100) : 0;
-                
-                $('#progressBar').css('width', progressPercent + '%');
-                $('#progressPercent').text(progressPercent + '%');
-                $('#solvedCount').text(solvedQuestions);
-                $('#attemptedCount').text(attemptedQuestions);
-                
-                updateDifficultyBreakdown();
-            }
-            
-            function updateDifficultyBreakdown() {
-                const questions = $('.practice-question-item');
-                let easyTotal = 0, mediumTotal = 0, hardTotal = 0;
-                let easySolved = 0, mediumSolved = 0, hardSolved = 0;
-                
-                questions.each(function() {
-                    const difficulty = $(this).find('.difficulty-easy').length > 0 ? 'easy' :
-                                     $(this).find('.difficulty-medium').length > 0 ? 'medium' : 'hard';
-                    const isSolved = $(this).find('.status-solved').length > 0;
-                    
-                    if (difficulty === 'easy') {
-                        easyTotal++;
-                        if (isSolved) easySolved++;
-                    } else if (difficulty === 'medium') {
-                        mediumTotal++;
-                        if (isSolved) mediumSolved++;
-                    } else {
-                        hardTotal++;
-                        if (isSolved) hardSolved++;
-                    }
-                });
-                
-                $('#easyProgress').text(`${easySolved}/${easyTotal}`);
-                $('#mediumProgress').text(`${mediumSolved}/${mediumTotal}`);
-                $('#hardProgress').text(`${hardSolved}/${hardTotal}`);
-            }
-            
-            // Initialize progress
-            updateProgress();
-            
-            // Enhanced question item interactions
-            $('.practice-question-item').hover(
-                function() {
-                    $(this).addClass('question-hover');
-                },
-                function() {
-                    $(this).removeClass('question-hover');
-                }
-            );
-            
-            // Quick action functions with animations
-            window.startRandomQuestion = function() {
-                const questionItems = $('.practice-question-item');
-                if (questionItems.length > 0) {
-                    const randomIndex = Math.floor(Math.random() * questionItems.length);
-                    const randomQuestion = questionItems.eq(randomIndex);
-                    const questionId = randomQuestion.data('question-id');
-                    
-                    // Add highlight animation before navigation
-                    randomQuestion.addClass('animate__animated animate__pulse');
-                    setTimeout(() => {
-                        window.location.href = `/dsa/solve/${questionId}/`;
-                    }, 500);
-                }
-            };
-            
-            window.showHints = function() {
-                // Create a beautiful hint modal
-                const hintModal = `
-                    <div class="modal fade" id="hintModal" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header bg-info text-white">
-                                    <h5 class="modal-title"><i class="fas fa-lightbulb mr-2"></i>Practice Hints</h5>
-                                    <button type="button" class="close text-white" data-dismiss="modal">
-                                        <span>&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="hint-content">
-                                        <div class="hint-item">
-                                            <i class="fas fa-check-circle text-success"></i>
-                                            <span>Start with easier problems to build confidence</span>
-                                        </div>
-                                        <div class="hint-item">
-                                            <i class="fas fa-clock text-warning"></i>
-                                            <span>Set time limits for each problem</span>
-                                        </div>
-                                        <div class="hint-item">
-                                            <i class="fas fa-code text-primary"></i>
-                                            <span>Focus on understanding the algorithm first</span>
-                                        </div>
-                                        <div class="hint-item">
-                                            <i class="fas fa-repeat text-info"></i>
-                                            <span>Practice similar problems to reinforce concepts</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                $('body').append(hintModal);
-                $('#hintModal').modal('show');
-                $('#hintModal').on('hidden.bs.modal', function() {
-                    $(this).remove();
-                });
-            };
-            
-            // Enhanced keyboard shortcuts
-            $(document).keydown(function(e) {
-                if (e.ctrlKey || e.metaKey) {
-                    switch(e.which) {
-                        case 32: // Ctrl+Space - Start/Pause timer
-                            e.preventDefault();
-                            if ($('#startTimer').is(':visible')) {
-                                $('#startTimer').click();
-                            } else {
-                                $('#pauseTimer').click();
-                            }
-                            break;
-                        case 82: // Ctrl+R - Reset timer
-                            e.preventDefault();
-                            $('#resetTimer').click();
-                            break;
-                        case 78: // Ctrl+N - New session
-                            e.preventDefault();
-                            location.reload();
-                            break;
-                        case 191: // Ctrl+/ - Show hints
-                            e.preventDefault();
-                            showHints();
-                            break;
-                    }
-                }
-            });
-            
-            // Session state management
-            function saveSessionState() {
-                const sessionData = {
-                    startTime: startTime,
-                    pausedTime: pausedTime,
-                    isPaused: isPaused,
-                    progress: {
-                        solved: $('.practice-question-item .status-solved').length,
-                        attempted: $('.practice-question-item .status-attempted').length
-                    }
-                };
-                localStorage.setItem('dsaSessionState', JSON.stringify(sessionData));
-            }
-            
-            function loadSessionState() {
-                const savedState = localStorage.getItem('dsaSessionState');
-                if (savedState) {
-                    try {
-                        const sessionData = JSON.parse(savedState);
-                        if (sessionData.startTime && !sessionData.isPaused) {
-                            startTime = sessionData.startTime;
-                            pausedTime = sessionData.pausedTime;
-                            timerInterval = setInterval(updateTimer, 1000);
-                            $('#startTimer').hide();
-                            $('#pauseTimer').show();
-                            $('.timer-circle').addClass('timer-running');
-                        }
-                    } catch (e) {
-                        console.error('Error loading session state:', e);
-                    }
-                }
-            }
-            
-            // Load session state on page load
-            loadSessionState();
-            
-            // Auto-save session state
-            setInterval(saveSessionState, 30000);
-            
-            // Save on page unload
-            $(window).on('beforeunload', function() {
-                saveSessionState();
-            });
-            
-            // Animate elements on scroll
-            function animateOnScroll() {
-                $('.animate-on-scroll').each(function() {
-                    const elementTop = $(this).offset().top;
-                    const elementBottom = elementTop + $(this).outerHeight();
-                    const viewportTop = $(window).scrollTop();
-                    const viewportBottom = viewportTop + $(window).height();
-
-                    if (elementBottom > viewportTop && elementTop < viewportBottom) {
-                        $(this).addClass('animated');
-                    }
-                });
-            }
-            
-            $(window).on('scroll', animateOnScroll);
-            animateOnScroll();
-        });
-    </script>
+    <script src="{% static 'js/dynamic_questions.js' %}"></script>
+    <script src="{% static 'js/practice.js' %}"></script>
 </body>
 </html>

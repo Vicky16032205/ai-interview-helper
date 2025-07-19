@@ -11,7 +11,7 @@ def get_gemini_model(model_type='technical'):
     """Get configured Gemini model"""
     api_key = settings.GEMINI_API_KEY if model_type == 'technical' else settings.GEMINI_HR_API_KEY
     genai.configure(api_key=api_key)
-    return genai.GenerativeModel('gemini-pro')
+    return genai.GenerativeModel('gemini-1.5-flash')  # Updated to current model name
 
 def analyze_code(code, language='python'):
     """Analyze code using Gemini API"""
@@ -146,24 +146,18 @@ def analyze_hr_answer(question, answer, is_audio=False):
             "star_usage": "Unknown"
         }
 
-def analyze_resume(resume_path):
+def analyze_resume(resume_path, file_extension):
     """Analyze resume using Gemini API"""
     try:
         model = get_gemini_model('technical')
         
-        # Simple text-based analysis for demo purposes
-        # In a real implementation, you'd use PDF/DOC parsing libraries
-        try:
-            with open(resume_path, 'r', encoding='utf-8') as file:
-                resume_content = file.read()
-        except:
-            # If can't read as text, provide generic analysis
-            resume_content = "Resume content analysis"
+        # Extract text from different file formats
+        resume_text = extract_text_from_file(resume_path, file_extension)
             
         prompt = f"""
         Analyze this resume content and provide detailed feedback:
         
-        Resume Content: {resume_content[:1000]}...
+        Resume Content: {resume_text[:2000]}...
         
         Please provide comprehensive analysis in JSON format with these keys:
         1. score (1-10) - Overall resume quality
@@ -174,6 +168,8 @@ def analyze_resume(resume_path):
         6. recommendations - Array of actionable recommendations
         7. formatting_score (1-10) - Resume formatting quality
         8. content_score (1-10) - Content quality and relevance
+        9. skills_identified - Array of technical skills found
+        10. experience_level - String indicating experience level (entry, mid, senior)
         
         Format as valid JSON only.
         """
@@ -191,10 +187,15 @@ def analyze_resume(resume_path):
             feedback = json.loads(response_text)
             
             # Ensure all required fields exist
-            required_fields = ['score', 'strengths', 'improvements', 'missing_sections', 'ats_score', 'recommendations']
+            required_fields = ['score', 'strengths', 'improvements', 'missing_sections', 'ats_score', 'recommendations', 'skills_identified', 'experience_level']
             for field in required_fields:
                 if field not in feedback:
-                    feedback[field] = [] if field in ['strengths', 'improvements', 'missing_sections', 'recommendations'] else 0
+                    if field in ['strengths', 'improvements', 'missing_sections', 'recommendations', 'skills_identified']:
+                        feedback[field] = []
+                    elif field == 'experience_level':
+                        feedback[field] = 'mid'
+                    else:
+                        feedback[field] = 0
                     
         except Exception as parse_error:
             print(f"JSON parsing error: {parse_error}")
@@ -222,7 +223,9 @@ def analyze_resume(resume_path):
                     "Ensure consistent formatting throughout"
                 ],
                 "formatting_score": 8,
-                "content_score": 7
+                "content_score": 7,
+                "skills_identified": ["Python", "JavaScript", "SQL"],
+                "experience_level": "mid"
             }
         
         return feedback
@@ -238,8 +241,178 @@ def analyze_resume(resume_path):
             "ats_score": 0,
             "recommendations": ["Please upload a valid resume file and try again"],
             "formatting_score": 0,
-            "content_score": 0
+            "content_score": 0,
+            "skills_identified": [],
+            "experience_level": "entry"
         }
+
+def extract_text_from_file(file_path, file_extension):
+    """Extract text from different file formats"""
+    try:
+        if file_extension == 'txt':
+            with open(file_path, 'r', encoding='utf-8') as file:
+                return file.read()
+        elif file_extension == 'pdf':
+            # For PDF files, we'll try to read basic text
+            # Note: For production, you should use PyPDF2 or pdfplumber
+            try:
+                import PyPDF2
+                with open(file_path, 'rb') as file:
+                    reader = PyPDF2.PdfReader(file)
+                    text = ""
+                    for page in reader.pages:
+                        text += page.extract_text()
+                    return text
+            except ImportError:
+                # Fallback if PyPDF2 not available
+                return "PDF content - install PyPDF2 for full text extraction"
+        else:
+            # For DOC/DOCX files
+            try:
+                import docx2txt
+                return docx2txt.process(file_path)
+            except ImportError:
+                # Fallback if docx2txt not available
+                return "Document content - install docx2txt for full text extraction"
+    except Exception as e:
+        print(f"Text extraction error: {e}")
+        return "Unable to extract text from file"
+
+def generate_questions_from_resume(resume_path, file_extension, difficulty='medium'):
+    """Generate technical questions based on resume content"""
+    try:
+        model = get_gemini_model('technical')
+        
+        # Extract text from resume
+        resume_text = extract_text_from_file(resume_path, file_extension)
+        
+        prompt = f"""
+        Based on this resume content, generate 5 technical interview questions at {difficulty} difficulty level:
+        
+        Resume Content: {resume_text[:1500]}...
+        
+        Focus on:
+        1. Technologies and programming languages mentioned
+        2. Projects and experience described
+        3. Skills and frameworks listed
+        4. Domain knowledge areas
+        
+        Generate questions that are:
+        - Relevant to their background
+        - Appropriate for {difficulty} difficulty
+        - Mix of theoretical and practical
+        - Test both breadth and depth of knowledge
+        
+        Format as JSON array with objects containing:
+        - question: The interview question
+        - category: Technology/concept category
+        - focus_area: Specific skill being tested
+        - explanation: Why this question is relevant to their background
+        
+        Example format:
+        [
+            {{
+                "question": "Explain how you would optimize database queries in the context of your e-commerce project",
+                "category": "Database Optimization",
+                "focus_area": "SQL Performance",
+                "explanation": "Based on your experience with database management in your projects"
+            }}
+        ]
+        """
+        
+        response = model.generate_content(prompt)
+        
+        try:
+            # Clean the response to extract JSON
+            response_text = response.text.strip()
+            if response_text.startswith('```json'):
+                response_text = response_text[7:-3]
+            elif response_text.startswith('```'):
+                response_text = response_text[3:-3]
+            
+            questions = json.loads(response_text)
+            
+            # Ensure it's a list
+            if not isinstance(questions, list):
+                questions = []
+                
+        except Exception as parse_error:
+            print(f"Questions JSON parsing error: {parse_error}")
+            # Fallback questions based on difficulty
+            questions = get_fallback_questions(difficulty)
+        
+        return questions
+        
+    except Exception as e:
+        print(f"Question generation error: {e}")
+        return get_fallback_questions(difficulty)
+
+def get_fallback_questions(difficulty='medium'):
+    """Fallback questions when AI generation fails"""
+    questions_by_difficulty = {
+        'easy': [
+            {
+                "question": "What is the difference between a list and a tuple in Python?",
+                "category": "Python Basics",
+                "focus_area": "Data Structures",
+                "explanation": "Testing fundamental Python knowledge"
+            },
+            {
+                "question": "Explain the concept of inheritance in Object-Oriented Programming",
+                "category": "OOP Concepts",
+                "focus_area": "Inheritance",
+                "explanation": "Basic OOP understanding"
+            },
+            {
+                "question": "What is a REST API and how does it work?",
+                "category": "Web Development",
+                "focus_area": "API Design",
+                "explanation": "Web development fundamentals"
+            }
+        ],
+        'medium': [
+            {
+                "question": "How would you implement caching in a web application to improve performance?",
+                "category": "System Design",
+                "focus_area": "Caching Strategies",
+                "explanation": "Performance optimization concepts"
+            },
+            {
+                "question": "Explain the difference between SQL and NoSQL databases with examples",
+                "category": "Database Systems",
+                "focus_area": "Database Design",
+                "explanation": "Database technology comparison"
+            },
+            {
+                "question": "Describe how you would handle concurrent requests in a web server",
+                "category": "Concurrency",
+                "focus_area": "Multi-threading",
+                "explanation": "Concurrent programming concepts"
+            }
+        ],
+        'hard': [
+            {
+                "question": "Design a distributed system for handling millions of concurrent users",
+                "category": "System Design",
+                "focus_area": "Scalability",
+                "explanation": "Large-scale system design"
+            },
+            {
+                "question": "Explain the CAP theorem and its implications in distributed databases",
+                "category": "Distributed Systems",
+                "focus_area": "Consistency Models",
+                "explanation": "Advanced distributed systems concepts"
+            },
+            {
+                "question": "How would you implement a rate limiter for an API gateway?",
+                "category": "System Design",
+                "focus_area": "Rate Limiting",
+                "explanation": "Advanced API design patterns"
+            }
+        ]
+    }
+    
+    return questions_by_difficulty.get(difficulty, questions_by_difficulty['medium'])
 
 def get_technical_questions():
     """Get technical interview questions by difficulty"""
