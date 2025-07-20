@@ -1,46 +1,310 @@
 /* Technical Interview Page Styles */
 
-/* Clean, professional technical interview styles */
+/* Modern glass morphism design with purple gradient background */
 body.technical-interview {
-    background-color: #f8f9fa;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    min-height: 100vh;
 }
 
+/* Page header styling */
 .page-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 60px 0;
+    background: none !important;
+    color: #f0f0f0 !important;
+    text-align: center !important;
+    padding: 2rem 0 !important;
     margin-bottom: 40px;
 }
 
 .page-header h1 {
+    color: #f0f0f0 !important;
+    font-weight: bold !important;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;
+    margin-bottom: 0.5rem !important;
     font-size: 2.5rem;
     font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: white !important;
 }
 
 .page-header .lead {
+    color: #f0f0f0 !important;
+    opacity: 0.9 !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
     font-size: 1.2rem;
-    opacity: 0.9;
-    color: white !important;
 }
 
-.section-card {
-    background: white;
+/* Card styling - consistent glass morphism design */
+.card, .section-card {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(10px) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
     border-radius: 12px;
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
-    border: none;
     margin-bottom: 30px;
     overflow: hidden;
 }
 
-.section-card .card-header {
-    background: white;
-    border-bottom: 2px solid #f1f3f4;
+.card-header {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    color: #f0f0f0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
     padding: 20px 25px;
     font-weight: 600;
     font-size: 1.1rem;
-    color: #2c3e50;
+}
+
+.card-header h5 {
+    color: #f0f0f0 !important;
+    font-weight: 600 !important;
+    margin-bottom: 0 !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+.card-body {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #f0f0f0 !important;
+    padding: 25px;
+}
+
+.card-body p,
+.card-body label,
+.card-body small,
+.card-body h5,
+.card-body h6 {
+    color: #f0f0f0 !important;
+}
+
+/* Question items styling */
+.question-item {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 8px !important;
+    padding: 1rem !important;
+    margin-bottom: 0.75rem !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+}
+
+.question-item:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+.question-item h6 {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+}
+
+.question-item .text-muted {
+    color: rgba(240, 240, 240, 0.8) !important;
+}
+
+/* Difficulty buttons */
+.difficulty-btn {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: #f0f0f0 !important;
+    padding: 0.75rem 1.5rem !important;
+    margin: 0 0.5rem !important;
+    border-radius: 25px !important;
+    transition: all 0.3s ease !important;
+}
+
+.difficulty-btn:hover,
+.difficulty-btn.active {
+    background-color: rgba(255, 255, 255, 0.25) !important;
+    color: white !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Upload area styling */
+.upload-area {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05)) !important;
+    border: 2px dashed rgba(255, 255, 255, 0.4) !important;
+    border-radius: 16px !important;
+    padding: 3rem 2rem !important;
+    text-align: center !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    position: relative !important;
+    overflow: hidden !important;
+    backdrop-filter: blur(10px) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+}
+
+.upload-area:hover {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.1)) !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+.upload-area.dragover {
+    background: linear-gradient(145deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.1)) !important;
+    border-color: rgba(102, 126, 234, 0.8) !important;
+    transform: scale(1.02) !important;
+}
+
+.upload-content {
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+.upload-content .fa-cloud-upload-alt {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-size: 4rem !important;
+    margin-bottom: 1.5rem !important;
+    display: block !important;
+    animation: float 3s ease-in-out infinite !important;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.upload-content h5 {
+    color: #f0f0f0 !important;
+    margin-bottom: 0.5rem !important;
+    font-weight: 600 !important;
+    font-size: 1.3rem !important;
+}
+
+.upload-content p {
+    color: rgba(240, 240, 240, 0.8) !important;
+    font-size: 0.95rem !important;
+    margin-bottom: 0 !important;
+}
+
+/* Upload area background decoration */
+.upload-area::before {
+    content: '' !important;
+    position: absolute !important;
+    top: -50% !important;
+    left: -50% !important;
+    width: 200% !important;
+    height: 200% !important;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 1px, transparent 1px) !important;
+    background-size: 20px 20px !important;
+    opacity: 0.6 !important;
+    z-index: 1 !important;
+    animation: backgroundMove 20s linear infinite !important;
+}
+
+@keyframes backgroundMove {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(20px, 20px); }
+}
+
+/* Action buttons */
+.action-button {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: #f0f0f0 !important;
+    padding: 0.75rem 2rem !important;
+    border-radius: 25px !important;
+    transition: all 0.3s ease !important;
+}
+
+.action-button:hover {
+    background-color: rgba(255, 255, 255, 0.25) !important;
+    color: white !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Bootstrap buttons styling */
+.btn {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: #f0f0f0 !important;
+}
+
+.btn:hover {
+    background-color: rgba(255, 255, 255, 0.25) !important;
+    color: white !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.btn-primary {
+    background-color: rgba(66, 139, 202, 0.8) !important;
+    border-color: rgba(66, 139, 202, 0.9) !important;
+}
+
+.btn-success {
+    background-color: rgba(92, 184, 92, 0.8) !important;
+    border-color: rgba(92, 184, 92, 0.9) !important;
+}
+
+.btn-secondary {
+    background-color: rgba(108, 117, 125, 0.8) !important;
+    border-color: rgba(108, 117, 125, 0.9) !important;
+}
+
+/* Alert styling */
+.alert-info {
+    background-color: rgba(217, 237, 247, 0.9) !important;
+    color: #31708f !important;
+    border-color: rgba(188, 232, 241, 0.8) !important;
+}
+
+/* Form controls */
+.form-control,
+.form-control-file {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    color: #2C3E50 !important;
+}
+
+/* Resume analysis sections */
+.resume-analysis-container {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+.analysis-header {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    padding: 1.5rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.analysis-header h3 {
+    color: #f0f0f0 !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.analysis-header p {
+    color: rgba(240, 240, 240, 0.8) !important;
+}
+
+.analysis-content {
+    padding: 1.5rem !important;
+}
+
+.analysis-section {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 8px !important;
+    padding: 1rem !important;
+    margin-bottom: 1rem !important;
+}
+
+.section-header h5 {
+    color: #f0f0f0 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.section-icon {
+    color: rgba(240, 240, 240, 0.8) !important;
+    margin-right: 0.5rem !important;
+}
+
+.card-header h5 {
+    color: #2c3e50 !important;
+    font-weight: 600 !important;
+    font-size: 1.2rem !important;
+    margin-bottom: 0;
+    text-shadow: none;
 }
 
 .section-card .card-body {
@@ -159,44 +423,6 @@ body.technical-interview {
     color: #6c757d;
     margin-bottom: 0;
     line-height: 1.5;
-}
-
-/* Code editor - modern style */
-.code-editor {
-    background: #f8f9fa;
-    border: 2px solid #e9ecef;
-    border-radius: 10px;
-    font-family: 'Fira Code', 'Monaco', 'Courier New', monospace;
-    font-size: 14px;
-    line-height: 1.5;
-    min-height: 350px;
-    padding: 20px;
-    resize: vertical;
-    transition: border-color 0.3s ease;
-}
-
-.code-editor:focus {
-    border-color: var(--primary-color);
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
-}
-
-.language-selector {
-    margin-bottom: 20px;
-}
-
-.language-selector select {
-    padding: 12px 15px;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    font-weight: 500;
-    transition: border-color 0.3s ease;
-}
-
-.language-selector select:focus {
-    border-color: var(--primary-color);
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
 }
 
 /* Action buttons - modern gradient style */
@@ -347,4 +573,735 @@ body.technical-interview {
 /* Smooth animations */
 .technical-interview * {
     transition: all 0.3s ease;
+}
+
+/* Resume Analysis Results - Modern Minimalistic Design */
+.resume-analysis-container {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 40px;
+}
+
+.analysis-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 30px;
+    color: white;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.header-icon {
+    background: rgba(255, 255, 255, 0.2);
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.header-text h3 {
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+.header-text p {
+    opacity: 0.9;
+    font-size: 1rem;
+    margin: 0;
+}
+
+.analysis-content {
+    padding: 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.analysis-section {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #e9ecef;
+}
+
+.analysis-section.full-width {
+    grid-column: 1 / -1;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.section-icon {
+    color: #667eea;
+    font-size: 18px;
+}
+
+.section-header h5 {
+    margin: 0;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1.2rem;
+}
+
+.skills-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.skill-tag {
+    background: #667eea;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.skill-tag.strong {
+    background: #28a745;
+}
+
+.skill-tag.intermediate {
+    background: #ffc107;
+    color: #333;
+}
+
+.experience-badge {
+    display: inline-block;
+    background: #28a745;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.experience-highlights {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.highlight-item {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    border-left: 4px solid #667eea;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.highlight-title {
+    color: #667eea;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.highlight-description {
+    color: #6c757d;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.focus-areas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.focus-area-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.focus-area-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.focus-area-title {
+    color: #667eea;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.focus-area-description {
+    color: #6c757d;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.analysis-complete {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.success-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.9;
+}
+
+.success-content h6 {
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+}
+
+.success-content p {
+    opacity: 0.9;
+    margin: 0;
+    font-size: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .analysis-content {
+        grid-template-columns: 1fr;
+        padding: 20px;
+        gap: 20px;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .focus-areas-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .analysis-header {
+        padding: 20px;
+    }
+    
+    .header-text h3 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Animation for showing results */
+.resume-analysis-container {
+    animation: slideInUp 0.6s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Enhanced visibility for Step 1 upload section */
+#step-upload .card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #2b72ba;
+    background: rgb(96, 92, 92) !important;
+}
+
+#step-upload .card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    border-bottom: 2px solid #dee2e6 !important;
+}
+
+#step-upload .card-header h5 {
+    color: #212529 !important;
+    font-weight: 700 !important;
+    font-size: 1.25rem !important;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+#step-upload .card-body {
+    background: rgb(225,225,225) !important;
+    padding: 25px !important;
+}
+
+/* Ensure all text in upload section is clearly visible */
+#step-upload .form-text,
+#step-upload label,
+#step-upload small,
+#step-upload .text-muted {
+    color: #212529 !important;
+    font-weight: 500 !important;
+}
+
+#step-upload .form-group label {
+    color: #343a40 !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    margin-bottom: 10px !important;
+}
+
+#step-upload .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+    font-weight: 500;
+}
+
+/* CRITICAL: Override all possible text color conflicts for upload section */
+body.technical-interview #step-upload,
+body.technical-interview #step-upload *,
+body.technical-interview #step-upload .card,
+body.technical-interview #step-upload .card-body,
+body.technical-interview #step-upload .form-group,
+body.technical-interview #step-upload label,
+body.technical-interview #step-upload .form-text,
+body.technical-interview #step-upload small,
+body.technical-interview #step-upload .text-muted {
+    color: #000000 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Force all text elements to be dark and visible */
+#step-upload .card-body * {
+    color: #000000 !important;
+    text-shadow: none !important;
+}
+
+/* Specific targeting for problematic elements */
+#step-upload .form-text.text-muted,
+#step-upload small.form-text.text-muted {
+    color: #333333 !important;
+    font-weight: 600 !important;
+    opacity: 1 !important;
+}
+
+/* Override any Bootstrap text-muted styling */
+#step-upload .text-muted {
+    color: #495057 !important;
+    opacity: 1 !important;
+}
+
+/* Make sure the entire upload area has proper contrast */
+#step-upload * {
+    color: #212529 !important;
+}
+
+/* Specific overrides for form elements */
+#step-upload input[type="file"] {
+    color: #212529 !important;
+    background: white !important;
+}
+
+/* COMPREHENSIVE FIX: Apply visibility fixes to ALL interview steps */
+/* Step 2: Generate Questions */
+#step-questions .card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e9ecef;
+    background: rgb(225,225,225) !important;
+}
+
+#step-questions .card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    border-bottom: 2px solid #dee2e6 !important;
+}
+
+#step-questions .card-header h5 {
+    color: #212529 !important;
+    font-weight: 700 !important;
+    font-size: 1.25rem !important;
+}
+
+#step-questions .card-body {
+    background: white !important;
+    padding: 25px !important;
+}
+
+#step-questions .card-body p,
+#step-questions .card-body * {
+    color: #212529 !important;
+    font-weight: 500 !important;
+}
+
+/* Step 3: Review Questions */
+#step-interview .card {
+    background: white !important;
+}
+
+#step-interview .card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    border-bottom: 2px solid #dee2e6 !important;
+}
+
+#step-interview .card-header h5 {
+    color: #212529 !important;
+    font-weight: 700 !important;
+    font-size: 1.25rem !important;
+}
+
+#step-interview .card-body,
+#step-interview .card-body * {
+    color: #212529 !important;
+    background: white !important;
+}
+
+/* Step 4: Active Interview */
+#step-active-interview .card {
+    background: white !important;
+}
+
+#step-active-interview .card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    border-bottom: 2px solid #dee2e6 !important;
+}
+
+#step-active-interview .card-header h5 {
+    color: #212529 !important;
+    font-weight: 700 !important;
+    font-size: 1.25rem !important;
+}
+
+#step-active-interview .card-body,
+#step-active-interview .card-body * {
+    color: #212529 !important;
+    background: white !important;
+}
+
+/* Question Selection Step */
+#step-question-selection .card {
+    background: white !important;
+}
+
+#step-question-selection .card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    border-bottom: 2px solid #dee2e6 !important;
+}
+
+#step-question-selection .card-header h5 {
+    color: #212529 !important;
+    font-weight: 700 !important;
+    font-size: 1.25rem !important;
+}
+
+#step-question-selection .card-body,
+#step-question-selection .card-body * {
+    color: #212529 !important;
+}
+
+/* UNIVERSAL FIX: Apply to all interview steps */
+body.technical-interview .interview-step,
+body.technical-interview .interview-step *,
+body.technical-interview .interview-step .card,
+body.technical-interview .interview-step .card-body,
+body.technical-interview .interview-step .card-header,
+body.technical-interview .interview-step p,
+body.technical-interview .interview-step h5,
+body.technical-interview .interview-step h6,
+body.technical-interview .interview-step label,
+body.technical-interview .interview-step .form-text,
+body.technical-interview .interview-step small,
+body.technical-interview .interview-step .text-muted {
+    color: #000000 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Force all text elements in interview steps to be dark */
+.interview-step .card-body *,
+.interview-step .card-header *,
+.interview-step p,
+.interview-step span,
+.interview-step div {
+    color: #000000 !important;
+    text-shadow: none !important;
+}
+
+/* Ensure card backgrounds are white */
+.interview-step .card {
+    background: white !important;
+}
+
+.interview-step .card-body {
+    background: white !important;
+}
+
+/* VIBRANT STYLING FOR GENERATED QUESTIONS */
+/* Main questions container */
+#interview-questions {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+#interview-questions .card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border: none !important;
+    border-radius: 20px !important;
+    box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3) !important;
+    overflow: hidden;
+    position: relative;
+}
+
+#interview-questions .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(255,255,255,0.1) 100%);
+    pointer-events: none;
+}
+
+#interview-questions .card-header {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: none !important;
+    border-radius: 20px 20px 0 0 !important;
+    padding: 25px 30px !important;
+    position: relative;
+    z-index: 2;
+}
+
+#interview-questions .card-header h5 {
+    color: #2c3e50 !important;
+    font-weight: 800 !important;
+    font-size: 1.5rem !important;
+    margin: 0 !important;
+    text-align: center;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+#interview-questions .card-body {
+    background: rgba(255, 255, 255, 0.98) !important;
+    padding: 0 !important;
+    position: relative;
+    z-index: 2;
+}
+
+/* Individual question items - vibrant cards */
+#interview-questions .question-item {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
+    border: none !important;
+    border-radius: 15px !important;
+    margin: 20px 25px !important;
+    padding: 25px !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+    border-left: 5px solid transparent !important;
+    animation: slideInRight 0.6s ease-out forwards;
+    opacity: 0;
+    transform: translateX(50px);
+}
+
+/* Staggered animation for each question */
+#interview-questions .question-item:nth-child(1) { animation-delay: 0.1s; }
+#interview-questions .question-item:nth-child(2) { animation-delay: 0.2s; }
+#interview-questions .question-item:nth-child(3) { animation-delay: 0.3s; }
+#interview-questions .question-item:nth-child(4) { animation-delay: 0.4s; }
+#interview-questions .question-item:nth-child(5) { animation-delay: 0.5s; }
+
+/* Colorful left borders based on question number */
+#interview-questions .question-item:nth-child(odd) {
+    border-left-color: #667eea !important;
+}
+
+#interview-questions .question-item:nth-child(even) {
+    border-left-color: #764ba2 !important;
+}
+
+#interview-questions .question-item:hover {
+    transform: translateY(-8px) scale(1.02) !important;
+    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2) !important;
+    border-left-width: 8px !important;
+}
+
+/* Floating elements for visual interest */
+#interview-questions .question-item::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+    transition: all 0.6s ease;
+    border-radius: 50%;
+}
+
+#interview-questions .question-item:hover::before {
+    top: -20%;
+    right: -20%;
+    opacity: 0.8;
+}
+
+/* Question headers with gradient text */
+#interview-questions .question-item h6 {
+    color: #2c3e50 !important;
+    font-weight: 700 !important;
+    font-size: 1.2rem !important;
+    margin-bottom: 15px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 15px !important;
+    position: relative;
+    z-index: 3;
+}
+
+#interview-questions .question-item h6::before {
+    content: counter(question-counter);
+    counter-increment: question-counter;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 800;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Reset counter for each questions container */
+#interview-questions .card-body {
+    counter-reset: question-counter;
+}
+
+/* Question text styling */
+#interview-questions .question-item p {
+    color: #495057 !important;
+    font-size: 1rem !important;
+    line-height: 1.7 !important;
+    margin-bottom: 15px !important;
+    font-weight: 500 !important;
+    position: relative;
+    z-index: 3;
+}
+
+/* Difficulty badges with vibrant colors */
+#interview-questions .badge {
+    padding: 8px 16px !important;
+    border-radius: 20px !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    position: relative;
+    z-index: 3;
+}
+
+#interview-questions .badge-success {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    border: none !important;
+}
+
+#interview-questions .badge-warning {
+    background: linear-gradient(135deg, #ffc107, #fd7e14) !important;
+    color: #000 !important;
+    border: none !important;
+}
+
+#interview-questions .badge-danger {
+    background: linear-gradient(135deg, #dc3545, #e83e8c) !important;
+    border: none !important;
+}
+
+/* Question metadata styling */
+#interview-questions .question-item small {
+    color: #6c757d !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    background: rgba(108, 117, 125, 0.1) !important;
+    padding: 8px 12px !important;
+    border-radius: 20px !important;
+    display: inline-block !important;
+    position: relative;
+    z-index: 3;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Add a subtle pattern background to the questions area */
+#interview-questions::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #interview-questions .question-item {
+        margin: 15px 15px !important;
+        padding: 20px !important;
+    }
+    
+    #interview-questions .card-header {
+        padding: 20px !important;
+    }
+    
+    #interview-questions .card-header h5 {
+        font-size: 1.3rem !important;
+    }
 }

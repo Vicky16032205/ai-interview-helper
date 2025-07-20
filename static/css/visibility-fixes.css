@@ -3,24 +3,18 @@
 /* FORCE LIGHT THEME - Override ALL dark theme styles */
 @media (prefers-color-scheme: dark) {
     .card {
-        background-color: #ffffff !important;
-        border: 1px solid #e9ecef !important;
         color: #2C3E50 !important;
     }
     
     .card-header {
-        background-color: #f8f9fa !important;
-        border-bottom: 1px solid #e9ecef !important;
         color: #2C3E50 !important;
     }
     
     .card-body {
-        background-color: #ffffff !important;
         color: #2C3E50 !important;
     }
     
     body {
-        background-color: #ffffff !important;
         color: #2C3E50 !important;
     }
     
@@ -38,9 +32,24 @@
     }
 }
 
-/* Force text visibility with highest specificity */
-body * {
-    color: #2C3E50 !important;
+/* Force text visibility with highest specificity - but not for everything */
+.card:last-child * {
+    color: white !important;
+}
+
+/* Specific fix for HR Interview Tips section */
+.card:last-child .card-body {
+    background-color: #2C3E50 !important;
+    color: white !important;
+}
+
+.card:last-child .card-header {
+    background-color: #2C3E50 !important;
+    color: white !important;
+}
+
+.card:last-child ul li {
+    color: white !important;
 }
 
 /* Override global text color for navigation elements - highest specificity */
@@ -160,21 +169,16 @@ body * {
     color: #4A90E2 !important;
 }
 
-/* Fix card backgrounds that are too dark */
+/* Fix card backgrounds that are too dark - Remove forced backgrounds */
 .card {
-    background-color: #ffffff !important;
-    border: 1px solid #e9ecef !important;
     color: #2C3E50 !important;
 }
 
 .card-body {
-    background-color: #ffffff !important;
     color: #2C3E50 !important;
 }
 
 .card-header {
-    background-color: #f8f9fa !important;
-    border-bottom: 1px solid #e9ecef !important;
     color: #2C3E50 !important;
 }
 
@@ -372,7 +376,6 @@ ol li {
 /* Dynamic content containers */
 #questionsContainer {
     color: #2C3E50 !important;
-    background-color: #ffffff !important;
 }
 
 #questionsContainer .form-check-label {
@@ -415,7 +418,6 @@ ol li {
 /* Make sure question list is visible */
 #questionsList {
     color: #2C3E50 !important;
-    background-color: #ffffff !important;
 }
 
 #questionsList h6 {
@@ -425,7 +427,6 @@ ol li {
 
 /* Override any dark theme or external CSS that might be interfering */
 body {
-    background-color: #ffffff !important;
     color: #2C3E50 !important;
 }
 
@@ -450,4 +451,89 @@ body {
 .card .btn-outline-primary {
     color: #4A90E2 !important;
     border-color: #4A90E2 !important;
+}
+
+/* Review Section Text Visibility Fixes */
+#send-review {
+    background-color: #f8f9fa !important;
+}
+
+#send-review .card {
+    background-color: white !important;
+    color: #2C3E50 !important;
+}
+
+#send-review .card-body {
+    background-color: white !important;
+    color: #2C3E50 !important;
+}
+
+#send-review h3 {
+    color: #2C3E50 !important;
+    font-weight: 600 !important;
+}
+
+#send-review p {
+    color: #6c757d !important;
+}
+
+#send-review .form-label {
+    color: #2C3E50 !important;
+    font-weight: 500 !important;
+    font-size: 0.9rem !important;
+}
+
+#send-review .form-control {
+    color: #2C3E50 !important;
+    background-color: white !important;
+    border: 1px solid #ced4da !important;
+}
+
+#send-review .form-control::placeholder {
+    color: #6c757d !important;
+    opacity: 0.7 !important;
+}
+
+/* Star rating visibility */
+#send-review .rating-stars {
+    margin: 10px 0;
+}
+
+#send-review .rating-stars .star {
+    color: #ffc107 !important;
+    font-size: 1.5rem !important;
+    cursor: pointer !important;
+    margin-right: 5px !important;
+    transition: color 0.2s ease !important;
+}
+
+#send-review .rating-stars .star:hover {
+    color: #ffb300 !important;
+}
+
+#send-review .rating-stars .star.active {
+    color: #ffc107 !important;
+}
+
+/* Button styling */
+#send-review .btn-primary {
+    background-color: #007bff !important;
+    border-color: #007bff !important;
+    color: white !important;
+    font-weight: 500 !important;
+}
+
+#send-review .btn-primary:hover {
+    background-color: #0056b3 !important;
+    border-color: #0056b3 !important;
+}
+
+/* Ensure all text in review section is visible */
+#send-review * {
+    color: inherit !important;
+}
+
+#send-review label,
+#send-review .form-label {
+    color: #2C3E50 !important;
 }

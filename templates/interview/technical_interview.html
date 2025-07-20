@@ -36,8 +36,197 @@
             </div>
         </div>
         
-        <!-- Question Selection -->
-        <div class="row mb-4">
+        <!-- Loading Indicator -->
+        <div id="loading" style="display: none;"></div>
+        
+        <!-- Error Messages -->
+        <div id="error-message" style="display: none;"></div>
+        
+        <!-- Step 1: Upload Resume -->
+        <div id="step-upload" class="interview-step">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-file-user mr-2"></i>Resume Analysis (Optional)</h5>
+                </div>
+                <div class="card-body">
+                    <form id="resume-upload-form" enctype="multipart/form-data" style="display: none;">
+                        {% csrf_token %}
+                        <input type="file" class="form-control-file" id="resume-upload" 
+                               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif">
+                    </form>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-lightbulb mr-2"></i>
+                        <strong>Pro Tip:</strong> Upload your resume for personalized technical questions based on your experience and skills.
+                        <br><small>Supported formats: PDF, DOC, DOCX, TXT (Max 10MB)</small>
+                    </div>
+                    
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-content">
+                            <i class="fas fa-cloud-upload-alt fa-4x mb-3" style="color: rgba(255, 255, 255, 0.8);"></i>
+                            <h5>Drop your resume here or click to browse</h5>
+                            <p class="text-muted">Supports PDF, DOC, DOCX, and TXT files (Max 10MB)</p>
+                            <div class="mt-3">
+                                <span class="badge badge-light px-3 py-2" style="background-color: rgba(255, 255, 255, 0.2); color: #f0f0f0; border-radius: 20px;">
+                                    <i class="fas fa-file-pdf mr-1"></i> PDF
+                                </span>
+                                <span class="badge badge-light px-3 py-2 ml-2" style="background-color: rgba(255, 255, 255, 0.2); color: #f0f0f0; border-radius: 20px;">
+                                    <i class="fas fa-file-word mr-1"></i> DOCX
+                                </span>
+                                <span class="badge badge-light px-3 py-2 ml-2" style="background-color: rgba(255, 255, 255, 0.2); color: #f0f0f0; border-radius: 20px;">
+                                    <i class="fas fa-file-alt mr-1"></i> TXT
+                                </span>
+                            </div>
+                            <input type="file" 
+                                   id="resumeFile" 
+                                   accept=".pdf,.doc,.docx,.txt" 
+                                   style="display: none;">
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3 text-center">
+                        <button class="action-button" id="analyzeResume" style="display: none;">
+                            <i class="fas fa-search mr-2"></i>Analyze Resume
+                        </button>
+                        <button class="btn btn-secondary mt-2" onclick="skipResumeUpload()">
+                            <i class="fas fa-arrow-right mr-2"></i>Skip Resume Upload
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Resume Analysis Display -->
+            <div id="resume-analysis" class="mt-3"></div>
+        </div>
+        
+        <!-- Dedicated Resume Analysis Results Section - Outside of step container -->
+        <div id="resume-analysis-results" class="container mt-4" style="display: none;">
+            <div class="resume-analysis-container">
+                <!-- Header with gradient background -->
+                <div class="analysis-header">
+                    <div class="header-content">
+                        <div class="header-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="header-text">
+                            <h3 class="mb-1">Resume Analysis Results</h3>
+                            <p class="mb-0">AI-powered insights from your resume</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analysis Content Grid -->
+                <div class="analysis-content" id="resume-analysis-content">
+                    <!-- Technical Skills Section -->
+                    <div class="analysis-section">
+                        <div class="section-header">
+                            <i class="fas fa-cogs section-icon"></i>
+                            <h5>Technical Skills</h5>
+                        </div>
+                        <div class="skills-grid" id="technical-skills">
+                            <!-- Skills will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Programming Languages Section -->
+                    <div class="analysis-section">
+                        <div class="section-header">
+                            <i class="fas fa-code section-icon"></i>
+                            <h5>Programming Languages</h5>
+                        </div>
+                        <div class="skills-grid" id="programming-languages">
+                            <!-- Languages will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Experience Level Section -->
+                    <div class="analysis-section">
+                        <div class="section-header">
+                            <i class="fas fa-user-graduate section-icon"></i>
+                            <h5>Experience Level</h5>
+                        </div>
+                        <div class="experience-badge" id="experience-level">
+                            <!-- Experience level will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Key Experience Highlights -->
+                    <div class="analysis-section full-width">
+                        <div class="section-header">
+                            <i class="fas fa-star section-icon"></i>
+                            <h5>Key Experience Highlights</h5>
+                        </div>
+                        <div class="experience-highlights" id="experience-highlights">
+                            <!-- Experience highlights will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Recommended Focus Areas -->
+                    <div class="analysis-section full-width">
+                        <div class="section-header">
+                            <i class="fas fa-bullseye section-icon"></i>
+                            <h5>Recommended Focus Areas</h5>
+                        </div>
+                        <div class="focus-areas-grid" id="focus-areas">
+                            <!-- Focus areas will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Success Message -->
+                    <div class="analysis-complete" id="analysis-complete" style="display: none;">
+                        <div class="success-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="success-content">
+                            <h6>Analysis Complete!</h6>
+                            <p>Your resume has been successfully analyzed. Proceed to the next step to generate personalized interview questions.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Step 2: Generate Questions -->
+        <div id="step-questions" class="interview-step" style="display: none;">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Step 2: Generate Interview Questions</h5>
+                </div>
+                <div class="card-body">
+                    <p>Based on your resume analysis, we'll generate personalized technical interview questions.</p>
+                    <button id="generate-questions-btn" class="btn btn-primary">
+                        Generate Questions
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Step 3: Review Questions -->
+        <div id="step-interview" class="interview-step" style="display: none;">
+            <div id="interview-questions"></div>
+            <div class="mt-3">
+                <button id="start-interview-btn" class="btn btn-success">
+                    Start Interview Practice
+                </button>
+            </div>
+        </div>
+        
+        <!-- Step 4: Active Interview -->
+        <div id="step-active-interview" class="interview-step" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Interview in Progress</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Interview interface will be implemented here -->
+                    <p>Interview interface coming soon...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Question Selection (Fallback/Alternative) -->
+        <div id="step-question-selection" class="interview-step">
+            <div class="row mb-4">
             <div class="col-12">
                 <div class="section-card">
                     <div class="card-header">
@@ -109,112 +298,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Code Editor Section -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="section-card">
-                    <div class="card-header">
-                        <h5 class="mb-0">
-                            <i class="fas fa-code mr-2"></i>Code Implementation
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="language-selector">
-                            <label class="font-weight-bold mb-2">Programming Language:</label>
-                            <select class="form-control" id="languageSelect">
-                                <option value="python">Python</option>
-                                <option value="javascript">JavaScript</option>
-                                <option value="java">Java</option>
-                                <option value="cpp">C++</option>
-                                <option value="go">Go</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="font-weight-bold mb-2">Your Implementation:</label>
-                            <textarea class="form-control code-editor" 
-                                      id="codeEditor" 
-                                      placeholder="// Write your code here...
-// Consider edge cases, time complexity, and scalability
-
-function solution() {
-    // Your implementation
-}"></textarea>
-                        </div>
-                        
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <button class="btn btn-outline-secondary mr-2">
-                                    <i class="fas fa-play mr-2"></i>Run Code
-                                </button>
-                                <button class="btn btn-outline-info">
-                                    <i class="fas fa-check mr-2"></i>Test Cases
-                                </button>
-                            </div>
-                            <button class="action-button" id="analyzeCode">
-                                <i class="fas fa-brain"></i>Analyze with AI
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Resume Analysis Section -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="section-card">
-                    <div class="card-header">
-                        <h5 class="mb-0">
-                            <i class="fas fa-file-user mr-2"></i>Resume Analysis
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="alert alert-info">
-                            <i class="fas fa-lightbulb mr-2"></i>
-                            <strong>Pro Tip:</strong> Upload your resume for personalized technical questions based on your experience and skills.
-                            <br><small>Supported formats: PDF, DOC, DOCX, TXT (Max 10MB)</small>
-                        </div>
-                        
-                        <div class="upload-area" id="uploadArea">
-                            <div class="upload-content">
-                                <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
-                                <h5>Drop your resume here or click to browse</h5>
-                                <p class="text-muted">Supports PDF, DOC, DOCX, and TXT files (Max 10MB)</p>
-                                <input type="file" 
-                                       id="resumeFile" 
-                                       accept=".pdf,.doc,.docx,.txt" 
-                                       style="display: none;">
-                            </div>
-                        </div>
-                        
-                        <div class="mt-3 text-center">
-                            <button class="action-button" id="analyzeResume" style="display: none;">
-                                <i class="fas fa-search"></i>Analyze Resume
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Results Section -->
-        <div class="row mb-4" id="resultsSection" style="display: none;">
-            <div class="col-12">
-                <div class="section-card">
-                    <div class="card-header">
-                        <h5 class="mb-0">
-                            <i class="fas fa-chart-line mr-2"></i>AI Analysis Results
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div id="analysisResults">
-                            <!-- Results will be populated here -->
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 

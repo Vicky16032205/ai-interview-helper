@@ -131,8 +131,8 @@ dmypy.json
 # Media files (uploads)
 media/
 
-# Google credentials (sensitive)
-GOOGLE_APPLICATION_CREDENTIALS.json
+# Google credentials backup (sensitive)
+backup_google_credentials/
 
 # IDE
 .vscode/

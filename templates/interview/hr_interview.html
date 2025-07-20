@@ -9,7 +9,148 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/dropdown-fixes.css' %}">
+    <link rel="stylesheet" href="{% static 'css/visibility-fixes.css' %}">
     <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            min-height: 100vh;
+        }
+        
+        /* Fix answer section visibility */
+        #answerSection .card-body,
+        #answerSection .card-header,
+        #feedbackSection .card-body,
+        #feedbackSection .card-header,
+        #followUpSection .card-body,
+        #followUpSection .card-header {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            color: #f0f0f0 !important;
+        }
+        
+        #answerSection .card-body *,
+        #answerSection .card-header *,
+        #feedbackSection .card-body *,
+        #feedbackSection .card-header *,
+        #followUpSection .card-body *,
+        #followUpSection .card-header * {
+            color: #f0f0f0 !important;
+        }
+        
+        /* Make buttons visible in answer sections */
+        #answerSection .btn,
+        #feedbackSection .btn,
+        #followUpSection .btn {
+            background-color: rgba(255, 255, 255, 0.2) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            color: #f0f0f0 !important;
+        }
+        
+        #answerSection .btn:hover,
+        #feedbackSection .btn:hover,
+        #followUpSection .btn:hover {
+            background-color: rgba(255, 255, 255, 0.3) !important;
+            color: white !important;
+        }
+        
+        /* Ensure textarea and form elements are visible */
+        #textAnswer {
+            background-color: rgba(255, 255, 255, 0.9) !important;
+            color: #2C3E50 !important;
+            border: 1px solid rgba(255, 255, 255, 0.5) !important;
+        }
+        
+        #textAnswer::placeholder {
+            color: #666 !important;
+        }
+        
+        /* Fix card headers text visibility */
+        .card-header {
+            background-color: rgba(255, 255, 255, 0.15) !important;
+            color: #f0f0f0 !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+        }
+        
+        .card-header h5 {
+            color: #f0f0f0 !important;
+            font-weight: 600 !important;
+            margin-bottom: 0 !important;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+        }
+        
+        /* Override Bootstrap card header backgrounds for consistency */
+        .card-header.bg-primary,
+        .card-header.bg-info {
+            background-color: rgba(255, 255, 255, 0.15) !important;
+            color: #f0f0f0 !important;
+        }
+        
+        /* Keep cards with dark semi-transparent background */
+        .card {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            backdrop-filter: blur(10px) !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+        }
+        
+        .card-body {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            color: #f0f0f0 !important;
+        }
+        
+        .card-body ul li,
+        .card-body p,
+        .card-body div {
+            color: #f0f0f0 !important;
+        }
+        
+        /* Fix double bullet points issue */
+        .card-body ul {
+            list-style-type: none !important;
+            padding-left: 0 !important;
+        }
+        
+        .card-body ul li {
+            position: relative !important;
+            padding-left: 20px !important;
+            margin-bottom: 8px !important;
+        }
+        
+        .card-body ul li::before {
+            content: "•" !important;
+            color: #f0f0f0 !important;
+            position: absolute !important;
+            left: 0 !important;
+        }
+        
+        /* Question list styling */
+        .list-group-item {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            color: #f0f0f0 !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            font-weight: 500 !important;
+        }
+        
+        .list-group-item:hover {
+            background-color: rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+        }
+        
+        /* Fix page title visibility */
+        h1 {
+            color: #f0f0f0 !important;
+            font-weight: bold !important;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;
+        }
+        
+        .alert-info {
+            background-color: #e3f2fd !important;
+            color: #1565c0 !important;
+            border-color: #90caf9 !important;
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation -->
@@ -147,8 +288,8 @@
                     <div class="spinner-border text-primary mb-3" role="status">
                         <span class="sr-only">Loading...</span>
                     </div>
-                    <h5>Analyzing your response...</h5>
-                    <p>Our AI is evaluating your communication skills</p>
+                    <h5 id="loadingTitle">Analyzing your response...</h5>
+                    <p id="loadingMessage">Our AI is evaluating your communication skills</p>
                 </div>
             </div>
         </div>

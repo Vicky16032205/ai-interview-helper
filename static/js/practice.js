@@ -129,11 +129,6 @@ function startRandomQuestion() {
     }
 }
 
-function showHints() {
-    // Implementation for showing hints
-    console.log('Showing hints...');
-}
-
 // Global function to save generated questions
 function saveGeneratedQuestion(button, question) {
     // Implementation for saving questions

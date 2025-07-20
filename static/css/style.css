@@ -1080,14 +1080,6 @@ body {
     font-weight: 600;
 }
 
-/* Code Editor */
-.code-editor {
-    font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
-    font-size: 14px;
-    line-height: 1.5;
-    background: #f8f9fa;
-}
-
 /* Audio Controls */
 .audio-controls {
     padding: 2rem;
@@ -1291,24 +1283,6 @@ pre {
 
 .skill-item:not(:last-child) {
     border-bottom: 1px solid #e9ecef;
-}
-
-/* Code Editor Improvements */
-.code-editor {
-    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-    font-size: 14px;
-    line-height: 1.5;
-    background: #1e1e1e;
-    color: #d4d4d4;
-    border: none;
-    outline: none;
-    padding: 1rem;
-}
-
-.code-editor:focus {
-    box-shadow: none;
-    border: none;
-    outline: none;
 }
 
 /* Enhanced Feedback Section */
@@ -2150,4 +2124,130 @@ pre {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* Review Section Styles */
+#send-review {
+    background-color: #f8f9fa;
+}
+
+#send-review .card {
+    background-color: transparent;
+    border: none;
+    border-radius: 15px;
+    box-shadow: none;
+    transition: transform 0.3s ease;
+}
+
+#send-review .card:hover {
+    transform: translateY(-5px);
+}
+
+#send-review .card-body {
+    padding: 2rem;
+    background-color: transparent;
+}
+
+#send-review h3 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+#send-review h3 i {
+    color: #ffc107;
+}
+
+#send-review p.text-muted {
+    color: #6c757d !important;
+    margin-bottom: 2rem;
+}
+
+#send-review .form-label {
+    color: #2c3e50;
+    font-weight: 500;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+}
+
+#send-review .form-control {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #2c3e50;
+}
+
+#send-review .form-control:focus {
+    border-color: #4e73df;
+    box-shadow: 0 0 0 0.15rem rgba(78, 115, 223, 0.1);
+    outline: 0;
+}
+
+#send-review .form-control::placeholder {
+    color: #858796;
+    opacity: 1;
+}
+
+/* Star rating styles */
+#send-review .rating-stars {
+    margin: 15px 0;
+}
+
+#send-review .rating-stars .star {
+    color: #ffc107;
+    font-size: 1.8rem;
+    cursor: pointer;
+    margin-right: 8px;
+    transition: all 0.2s ease;
+}
+
+#send-review .rating-stars .star:hover {
+    color: #ffb300;
+    transform: scale(1.1);
+}
+
+#send-review .rating-stars .star.text-muted {
+    color: #e3e6f0 !important;
+}
+
+#send-review .rating-stars .star.text-warning {
+    color: #ffc107 !important;
+}
+
+/* Button styling */
+#send-review .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 50px;
+    padding: 12px 40px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+#send-review .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+#send-review .btn-primary:disabled {
+    opacity: 0.6;
+    transform: none;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+}
+
+/* Success message styling */
+#send-review .text-success {
+    color: #28a745 !important;
+}
+
+#send-review .fa-check-circle {
+    color: #28a745 !important;
 }

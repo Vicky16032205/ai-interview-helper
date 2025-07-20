@@ -44,6 +44,9 @@ $(document).ready(function() {
             return;
         }
         
+        // Update loading message for text processing
+        $('#loadingTitle').text('Analyzing your response...');
+        $('#loadingMessage').text('Our AI is evaluating your communication skills');
         $('#loadingModal').modal('show');
         
         apiCall('/interview/api/analyze-answer/', 'POST', {
@@ -138,6 +141,9 @@ $(document).ready(function() {
         formData.append('question', selectedQuestion);
         formData.append('type', 'hr');
         
+        // Update loading message for audio processing
+        $('#loadingTitle').text('Processing your audio...');
+        $('#loadingMessage').text('Transcribing speech with AI and analyzing your response');
         $('#loadingModal').modal('show');
         
         $.ajax({
@@ -146,7 +152,7 @@ $(document).ready(function() {
             data: formData,
             processData: false,
             contentType: false,
-            timeout: 30000, // 30 second timeout for audio upload
+            timeout: 60000, // 60 second timeout for audio transcription processing
             headers: {
                 'X-CSRFToken': getCookie('csrftoken')
             }
@@ -165,9 +171,16 @@ $(document).ready(function() {
                     $('#followUpSection').show();
                 }
                 
+                // Show transcription success message if provided
+                if (response.transcription) {
+                    showNotification('Audio successfully transcribed and analyzed!', 'success');
+                }
+                
                 $('html, body').animate({
                     scrollTop: $('#feedbackSection').offset().top - 100
                 }, 500);
+            } else {
+                showNotification(response.error || 'Error analyzing audio answer', 'danger');
             }
         })
         .fail(function(xhr, status, error) {

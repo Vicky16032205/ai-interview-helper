@@ -28,9 +28,9 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -102,5 +102,19 @@ CORS_ALLOWED_ORIGINS = [
 GEMINI_API_KEY = env('GEMINI_API_KEY', default='')
 GEMINI_HR_API_KEY = env('GEMINI_HR_API_KEY', default='')
 
+# AssemblyAI API Key
+ASSEMBLYAI_API_KEY = env('ASSEMBLYAI_API_KEY', default='')
+
 # File upload settings
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10MB
+
+# Email Configuration
+# Always use SMTP for email sending
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
+# Use the actual Gmail address as the from email to avoid authentication issues
+DEFAULT_FROM_EMAIL = env('EMAIL_HOST_USER', default='vickyguptagkp55@gmail.com')
