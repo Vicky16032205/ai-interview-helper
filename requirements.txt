@@ -10,3 +10,6 @@ django-cors-headers==4.3.1
 PyPDF2==3.0.1
 python-docx>=0.8.11
 docx2txt>=0.8
+dj-database-url>=2.0.0
+python-decouple>=3.8
+psycopg2-binary>=2.9.7

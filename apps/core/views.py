@@ -57,16 +57,10 @@ def progress(request):
 def submit_review(request):
     """Handle user review submission and send email"""
     try:
-        print("=== Review Submission Debug ===")
-        print(f"Request method: {request.method}")
-        print(f"Request data: {request.POST}")
-        
         reviewer_name = request.POST.get('reviewer_name', '')
         reviewer_email = request.POST.get('reviewer_email', '')
         rating = request.POST.get('rating', '5')
         review_message = request.POST.get('review_message', '')
-        
-        print(f"Extracted data: name={reviewer_name}, email={reviewer_email}, rating={rating}")
         
         # Validate required fields
         if not all([reviewer_name, reviewer_email, review_message]):
