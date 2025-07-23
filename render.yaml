@@ -12,5 +12,18 @@ services:
         generateValue: true
       - key: DEBUG
         value: "False"
+      # AI API Keys (CRITICAL - Required for core functionality)
       - key: GEMINI_API_KEY
-        sync: false  # You'll set this manually in Render dashboard
+        sync: false  # Set manually in Render dashboard
+      - key: ASSEMBLYAI_API_KEY
+        sync: false  # Set manually in Render dashboard
+      # Optional AI API Keys
+      - key: GEMINI_HR_API_KEY
+        sync: false  # Optional: Uses GEMINI_API_KEY as fallback
+      # Email Configuration (Optional - for user feedback feature)
+      - key: EMAIL_HOST_USER
+        sync: false  # Optional: Gmail address for sending emails
+      - key: EMAIL_HOST_PASSWORD
+        sync: false  # Optional: Gmail app password
+      - key: DEFAULT_FROM_EMAIL
+        value: "AI Interview Helper <noreply@aiinterviewhelper.com>"
