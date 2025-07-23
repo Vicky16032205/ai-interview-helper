@@ -12,4 +12,7 @@ python manage.py collectstatic --no-input
 echo "Running migrations..."
 python manage.py migrate
 
+echo "Loading sample DSA questions..."
+python manage.py load_sample_questions
+
 echo "Build completed successfully!"

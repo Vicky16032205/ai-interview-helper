@@ -1,13 +1,12 @@
 #!/usr/bin/env python
-"""Django's command-line utility for administrative tasks."""
+"""Django's command-line utility for development tasks."""
 import os
 import sys
 
 
 def main():
-    """Run administrative tasks."""
-    # Use render settings for deployment checks, fallback to default settings
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ai_interview_helper.settings_render')
+    """Run administrative tasks with development settings."""
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ai_interview_helper.settings')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

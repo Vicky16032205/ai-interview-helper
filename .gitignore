@@ -26,7 +26,13 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
-staticfiles
+
+# Static and Media Files
+staticfiles/
+staticfiles.json
+media/
+media/resumes/
+media/audio_answers/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -61,6 +67,9 @@ coverage.xml
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+db.sqlite3-wal
+migrations/__pycache__/
+migrations/*.pyc
 
 # Flask stuff:
 instance/
@@ -102,17 +111,36 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 
-# Environments
+# Environment Variables (CRITICAL - Contains API Keys)
 .env
 .env.local
 .env.production
+.env.development
+.env.test
+.env.staging
 .env.railway
+.env.render
+.env.heroku
+.env.backup
 .venv
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
+
+# API Keys and Secrets (CRITICAL)
+*api_key*
+*secret_key*
+*credentials*
+*token*
+*.pem
+*.key
+*.crt
+*.p12
+google_credentials.json
+service_account.json
+firebase_credentials.json
 
 # Spyder project settings
 .spyderproject
@@ -132,19 +160,108 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Media files (uploads)
-media/
-
 # Google credentials backup (sensitive)
 backup_google_credentials/
 
-# IDE
+# IDE and Editor Files
 .vscode/
+.vscode/settings.json
+.vscode/launch.json
 .idea/
 *.swp
 *.swo
 *~
+*.sublime-project
+*.sublime-workspace
 
-# OS
+# Operating System Files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+desktop.ini
+
+# Logs and Debug Files
+*.log
+logs/
+debug.log
+error.log
+access.log
+
+# Temporary Files
+*.tmp
+*.temp
+*.bak
+*.backup
+*.orig
+*~
+
+# Cache Directories
+.cache/
+.npm/
+.yarn/
+node_modules/
+.sass-cache/
+
+# Build Output
+build/
+dist/
+out/
+
+# Testing
+.coverage
+.pytest_cache/
+.testmondata/
+test-results/
+coverage/
+
+# AI Interview Helper Specific
+# User uploaded files (contains sensitive personal data)
+media/resumes/*
+!media/resumes/.gitkeep
+media/audio_answers/*
+!media/audio_answers/.gitkeep
+
+# Generated AI responses (may contain user data)
+generated_responses/
+ai_cache/
+temp_audio/
+processed_resumes/
+
+# Configuration backups
+settings_backup.py
+local_config.py
+
+# Docker volumes and data
+docker-data/
+postgres-data/
+redis-data/
+
+# Deployment Files (if they contain secrets)
+.dockerignore.local
+docker-compose.override.yml
+docker-compose.local.yml
+
+# Backup Files
+*.sql.bak
+*.db.bak
+backup_*.sql
+database_backup/
+
+# SSL Certificates
+*.crt
+*.key
+*.pem
+ssl/
+
+# Local Development
+local/
+tmp/
+temp/
+
+# Package Lock Files (uncomment if you want to ignore them)
+# package-lock.json
+# yarn.lock

@@ -11,6 +11,7 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ai_interview_helper.settings')
+# Use Render settings in production, fallback to default settings
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ai_interview_helper.settings_render')
 
 application = get_wsgi_application()

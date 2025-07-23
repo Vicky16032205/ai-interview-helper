@@ -60,14 +60,14 @@ AI-powered interview preparation platform built with Django and Google Gemini AI
 
 4. **Setup database**
    ```bash
-   python manage.py migrate
-   python manage.py load_sample_questions
-   python manage.py createsuperuser  # optional
+   python manage_dev.py migrate  # For development
+   python manage_dev.py load_sample_questions
+   python manage_dev.py createsuperuser  # optional
    ```
 
 5. **Run the application**
    ```bash
-   python manage.py runserver
+   python manage_dev.py runserver  # For development
    ```
    
    Visit `http://localhost:8000` to start practicing!

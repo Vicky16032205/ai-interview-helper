@@ -5,6 +5,13 @@ class Command(BaseCommand):
     help = 'Load sample DSA questions'
 
     def handle(self, *args, **kwargs):
+        # Check if questions already exist to avoid duplicates
+        if DSAQuestion.objects.exists():
+            self.stdout.write(
+                self.style.WARNING('DSA questions already exist. Skipping data load.')
+            )
+            return
+            
         questions = [
             {
                 'title': 'Two Sum',
