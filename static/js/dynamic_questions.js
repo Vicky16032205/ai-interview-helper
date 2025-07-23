@@ -1,7 +1,8 @@
 // Dynamic Question Generation for DSA Practice
 class DynamicQuestionManager {
     constructor() {
-        this.apiBaseUrl = 'http://127.0.0.1:8000/dsa/api/';
+        // Use relative URLs that work in both development and production
+        this.apiBaseUrl = '/dsa/api/';
         this.userPerformanceHistory = this.loadUserHistory();
         this.currentQuestions = [];
         this.isGenerating = false;

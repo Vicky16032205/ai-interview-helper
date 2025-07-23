@@ -144,11 +144,8 @@ if DEBUG:
     ]
     CORS_ALLOW_ALL_ORIGINS = True  # Only for development
 else:
-    # Production CORS - HTTP only
-    CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[
-        "http://localhost:8000",
-        "http://127.0.0.1:8000",
-    ])
+    # Production CORS - should be configured via environment variables
+    CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[])
     CORS_ALLOW_CREDENTIALS = True
     CORS_ALLOW_ALL_ORIGINS = False
 
